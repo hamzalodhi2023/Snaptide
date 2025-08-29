@@ -1,5 +1,6 @@
 {
   "name": "snaptide",
+  "description": "Snaptide is a modern, lightweight, and efficient media downloader built for speed and simplicity. Designed with a sleek interface and smooth performance, it allows users to capture and save content instantly — just like a tide that flows seamlessly.",
   "private": true,
   "version": "0.0.0",
   "type": "module",
