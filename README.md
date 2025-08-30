@@ -5,7 +5,7 @@
 ![GitHub stars](https://img.shields.io/github/stars/hamzalodhi2023/snaptide?style=flat&logo=github)  
 ![GitHub issues](https://img.shields.io/github/issues/hamzalodhi2023/snaptide)  
 ![GitHub license](https://img.shields.io/github/license/hamzalodhi2023/snaptide)  
-![Node.js](https://img.shields.io/badge/Node.js-22.19.0.x-green?logo=node.js)  
+![Node.js](https://img.shields.io/badge/Node.js-22.19.0-green?logo=node.js)  
 ![Status](https://img.shields.io/badge/status-active-success)
 
 Snaptide is a modern, lightweight, and efficient media downloader built for speed and simplicity.  
