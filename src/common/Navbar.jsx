@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from "react";
+import { IoMdAdd } from "react-icons/io";
+import { GrFormSubtract } from "react-icons/gr";
 import {
   HiOutlineUsers,
   HiOutlineDownload,
@@ -14,22 +16,34 @@ import { Link } from "react-router-dom";
 function Navbar() {
   const navDrawerRef = useRef(null);
   const featuresDropdownRef = useRef(null);
+  const mobileFeaturesRef = useRef(null); // New ref for mobile features dropdown
   const [navDrawerOpen, setNavDrawerOpen] = useState(false);
   const [featuresDropdownOpen, setFeaturesDropdownOpen] = useState(false);
+  const [mobileFeaturesOpen, setMobileFeaturesOpen] = useState(false); // Separate state for mobile
 
   const toggleNavDrawer = () => setNavDrawerOpen(!navDrawerOpen);
   const toggleFeaturesDropdown = () =>
     setFeaturesDropdownOpen(!featuresDropdownOpen);
+  const toggleMobileFeatures = () => setMobileFeaturesOpen(!mobileFeaturesOpen); // Separate toggle for mobile
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      // Close features dropdown if clicked outside
+      // Close desktop features dropdown if clicked outside
       if (
         featuresDropdownRef.current &&
         !featuresDropdownRef.current.contains(event.target) &&
         !event.target.closest(".features-dropdown-trigger")
       ) {
         setFeaturesDropdownOpen(false);
+      }
+
+      // Close mobile features dropdown if clicked outside
+      if (
+        mobileFeaturesRef.current &&
+        !mobileFeaturesRef.current.contains(event.target) &&
+        !event.target.closest(".mobile-features-trigger")
+      ) {
+        setMobileFeaturesOpen(false);
       }
 
       // Close mobile nav drawer if clicked outside
@@ -39,6 +53,7 @@ function Navbar() {
         !event.target.closest(".mobile-toggle-button")
       ) {
         setNavDrawerOpen(false);
+        setMobileFeaturesOpen(false); // Also close mobile features when drawer closes
       }
     };
 
@@ -47,7 +62,7 @@ function Navbar() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [navDrawerOpen, featuresDropdownOpen]);
+  }, [navDrawerOpen, featuresDropdownOpen, mobileFeaturesOpen]);
 
   return (
     <>
@@ -284,26 +299,34 @@ function Navbar() {
             <Link
               to="/"
               className="block py-3 px-4 text-gray-700 hover:bg-blue-50 rounded-lg transition-colors"
-              onClick={toggleNavDrawer}
+              onClick={() => {
+                setNavDrawerOpen(false);
+                setMobileFeaturesOpen(false);
+              }}
             >
               Home
             </Link>
 
             {/* Features Dropdown for Mobile */}
-            <div>
+            <div ref={mobileFeaturesRef}>
               <button
-                onClick={toggleFeaturesDropdown}
-                className="flex justify-between w-full py-3 px-4 text-gray-700 hover:bg-blue-50 rounded-lg transition-colors"
+                onClick={toggleMobileFeatures}
+                className="mobile-features-trigger flex justify-between w-full py-3 px-4 text-gray-700 hover:bg-blue-50 rounded-lg transition-colors items-center"
               >
                 <span>Features</span>
-                <span>{featuresDropdownOpen ? "-" : "+"}</span>
+                <span>
+                  {mobileFeaturesOpen ? <GrFormSubtract /> : <IoMdAdd />}
+                </span>
               </button>
-              {featuresDropdownOpen && (
+              {mobileFeaturesOpen && (
                 <div className="pl-6 mt-2 space-y-2 border-l border-gray-200 ml-4">
                   <Link
                     to="/ai-transcription"
                     className="flex items-center py-2 text-gray-600 hover:text-blue-600 transition-colors"
-                    onClick={toggleNavDrawer}
+                    onClick={() => {
+                      setNavDrawerOpen(false);
+                      setMobileFeaturesOpen(false);
+                    }}
                   >
                     <HiOutlineMicrophone className="w-4 h-4 mr-2" />
                     AI-Transcription
@@ -311,7 +334,10 @@ function Navbar() {
                   <Link
                     to="/video-downloader"
                     className="flex items-center py-2 text-gray-600 hover:text-blue-600 transition-colors"
-                    onClick={toggleNavDrawer}
+                    onClick={() => {
+                      setNavDrawerOpen(false);
+                      setMobileFeaturesOpen(false);
+                    }}
                   >
                     <HiOutlineDownload className="w-4 h-4 mr-2" />
                     Video Downloader
@@ -319,7 +345,10 @@ function Navbar() {
                   <Link
                     to="/video-to-text"
                     className="flex items-center py-2 text-gray-600 hover:text-blue-600 transition-colors"
-                    onClick={toggleNavDrawer}
+                    onClick={() => {
+                      setNavDrawerOpen(false);
+                      setMobileFeaturesOpen(false);
+                    }}
                   >
                     <HiOutlineVideoCamera className="w-4 h-4 mr-2" />
                     Video to Text
@@ -327,7 +356,10 @@ function Navbar() {
                   <Link
                     to="/youtube-downloader"
                     className="flex items-center py-2 text-gray-600 hover:text-blue-600 transition-colors"
-                    onClick={toggleNavDrawer}
+                    onClick={() => {
+                      setNavDrawerOpen(false);
+                      setMobileFeaturesOpen(false);
+                    }}
                   >
                     <IoLogoYoutube className="w-4 h-4 mr-2" />
                     YouTube Video Downloader
@@ -335,7 +367,10 @@ function Navbar() {
                   <Link
                     to="/audio-to-text"
                     className="flex items-center py-2 text-gray-600 hover:text-blue-600 transition-colors"
-                    onClick={toggleNavDrawer}
+                    onClick={() => {
+                      setNavDrawerOpen(false);
+                      setMobileFeaturesOpen(false);
+                    }}
                   >
                     <HiOutlineMicrophone className="w-4 h-4 mr-2" />
                     Audio to Text
@@ -343,7 +378,10 @@ function Navbar() {
                   <Link
                     to="/transcribe-translation"
                     className="flex items-center py-2 text-gray-600 hover:text-blue-600 transition-colors"
-                    onClick={toggleNavDrawer}
+                    onClick={() => {
+                      setNavDrawerOpen(false);
+                      setMobileFeaturesOpen(false);
+                    }}
                   >
                     <HiOutlineTranslate className="w-4 h-4 mr-2" />
                     Transcribe & Translation
@@ -351,7 +389,10 @@ function Navbar() {
                   <Link
                     to="/youtube-transcript"
                     className="flex items-center py-2 text-gray-600 hover:text-blue-600 transition-colors"
-                    onClick={toggleNavDrawer}
+                    onClick={() => {
+                      setNavDrawerOpen(false);
+                      setMobileFeaturesOpen(false);
+                    }}
                   >
                     <HiOutlineDocumentText className="w-4 h-4 mr-2" />
                     YouTube Transcript Generator
@@ -363,7 +404,10 @@ function Navbar() {
             <Link
               to="/pricing"
               className="block py-3 px-4 text-gray-700 hover:bg-blue-50 rounded-lg transition-colors"
-              onClick={toggleNavDrawer}
+              onClick={() => {
+                setNavDrawerOpen(false);
+                setMobileFeaturesOpen(false);
+              }}
             >
               About
             </Link>
@@ -371,7 +415,10 @@ function Navbar() {
             <Link
               to="/affiliate"
               className="block py-3 px-4 text-gray-700 hover:bg-blue-50 rounded-lg transition-colors"
-              onClick={toggleNavDrawer}
+              onClick={() => {
+                setNavDrawerOpen(false);
+                setMobileFeaturesOpen(false);
+              }}
             >
               Contact
             </Link>
