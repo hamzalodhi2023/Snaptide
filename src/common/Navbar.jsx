@@ -114,20 +114,20 @@ function Navbar() {
               </button>
 
               {featuresDropdownOpen && (
-                <div className="absolute top-full -left-52 mt-2 w-[90vw] max-w-[700px] bg-white shadow-xl border rounded-lg py-4 z-50 grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">
+                <div className="absolute top-full -left-52 mt-2 w-[90vw] max-w-[700px] bg-secondary shadow-xl border-2 border-accent rounded-lg py-4 z-50 grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">
                   <Link
                     to="/ai-transcription"
-                    className="flex items-start p-3 rounded-lg hover:bg-gray-50 transition-colors group"
+                    className="flex items-start p-3 rounded-lg hover:bg-accent transition-colors group"
                     onClick={() => setFeaturesDropdownOpen(false)}
                   >
                     <div className="bg-blue-100 p-2 rounded-md mr-3 group-hover:bg-blue-200 transition-colors">
                       <HiOutlineMicrophone className="w-5 h-5 text-blue-600" />
                     </div>
                     <div>
-                      <div className="font-medium text-gray-900">
+                      <div className="font-medium text-white">
                         AI-Transcription
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-white">
                         Convert audio to text
                       </div>
                     </div>
@@ -135,17 +135,17 @@ function Navbar() {
 
                   <Link
                     to="/video-downloader"
-                    className="flex items-start p-3 rounded-lg hover:bg-gray-50 transition-colors group"
+                    className="flex items-start p-3 rounded-lg hover:bg-accent transition-colors group"
                     onClick={() => setFeaturesDropdownOpen(false)}
                   >
                     <div className="bg-green-100 p-2 rounded-md mr-3 group-hover:bg-green-200 transition-colors">
                       <HiOutlineDownload className="w-5 h-5 text-green-600" />
                     </div>
                     <div>
-                      <div className="font-medium text-gray-900">
+                      <div className="font-medium text-white">
                         Video Downloader
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-white">
                         Download videos easily
                       </div>
                     </div>
@@ -153,17 +153,17 @@ function Navbar() {
 
                   <Link
                     to="/video-to-text"
-                    className="flex items-start p-3 rounded-lg hover:bg-gray-50 transition-colors group"
+                    className="flex items-start p-3 rounded-lg hover:bg-accent transition-colors group"
                     onClick={() => setFeaturesDropdownOpen(false)}
                   >
                     <div className="bg-purple-100 p-2 rounded-md mr-3 group-hover:bg-purple-200 transition-colors">
                       <HiOutlineVideoCamera className="w-5 h-5 text-purple-600" />
                     </div>
                     <div>
-                      <div className="font-medium text-gray-900">
+                      <div className="font-medium text-white">
                         Video to Text
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-white">
                         Extract text from videos
                       </div>
                     </div>
@@ -171,17 +171,17 @@ function Navbar() {
 
                   <Link
                     to="/youtube-downloader"
-                    className="flex items-start p-3 rounded-lg hover:bg-gray-50 transition-colors group"
+                    className="flex items-start p-3 rounded-lg hover:bg-accent transition-colors group"
                     onClick={() => setFeaturesDropdownOpen(false)}
                   >
                     <div className="bg-red-100 p-2 rounded-md mr-3 group-hover:bg-red-200 transition-colors">
                       <IoLogoYoutube className="w-5 h-5 text-red-600" />
                     </div>
                     <div>
-                      <div className="font-medium text-gray-900">
+                      <div className="font-medium text-white">
                         YouTube Video Downloader
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-white">
                         Download YouTube videos
                       </div>
                     </div>
@@ -189,17 +189,17 @@ function Navbar() {
 
                   <Link
                     to="/audio-to-text"
-                    className="flex items-start p-3 rounded-lg hover:bg-gray-50 transition-colors group"
+                    className="flex items-start p-3 rounded-lg hover:bg-accent transition-colors group"
                     onClick={() => setFeaturesDropdownOpen(false)}
                   >
                     <div className="bg-yellow-100 p-2 rounded-md mr-3 group-hover:bg-yellow-200 transition-colors">
                       <HiOutlineMicrophone className="w-5 h-5 text-yellow-600" />
                     </div>
                     <div>
-                      <div className="font-medium text-gray-900">
+                      <div className="font-medium text-white">
                         Audio to Text
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-white">
                         Transcribe audio files
                       </div>
                     </div>
@@ -207,17 +207,17 @@ function Navbar() {
 
                   <Link
                     to="/transcribe-translation"
-                    className="flex items-start p-3 rounded-lg hover:bg-gray-50 transition-colors group"
+                    className="flex items-start p-3 rounded-lg hover:bg-accent transition-colors group"
                     onClick={() => setFeaturesDropdownOpen(false)}
                   >
                     <div className="bg-indigo-100 p-2 rounded-md mr-3 group-hover:bg-indigo-200 transition-colors">
                       <HiOutlineTranslate className="w-5 h-5 text-indigo-600" />
                     </div>
                     <div>
-                      <div className="font-medium text-gray-900">
+                      <div className="font-medium text-white">
                         Transcribe & Translation
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-white">
                         Transcribe and translate content
                       </div>
                     </div>
@@ -225,17 +225,17 @@ function Navbar() {
 
                   <Link
                     to="/youtube-transcript"
-                    className="flex items-start p-3 rounded-lg hover:bg-gray-50 transition-colors group"
+                    className="flex items-start p-3 rounded-lg hover:bg-accent transition-colors group"
                     onClick={() => setFeaturesDropdownOpen(false)}
                   >
                     <div className="bg-pink-100 p-2 rounded-md mr-3 group-hover:bg-pink-200 transition-colors">
                       <HiOutlineDocumentText className="w-5 h-5 text-pink-600" />
                     </div>
                     <div>
-                      <div className="font-medium text-gray-900">
+                      <div className="font-medium text-white">
                         YouTube Transcript Generator
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-white">
                         Generate YouTube transcripts
                       </div>
                     </div>
