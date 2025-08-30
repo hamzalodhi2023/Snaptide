@@ -6,13 +6,14 @@ import {
   HiOutlineVideoCamera,
   HiOutlineTranslate,
   HiOutlineDocumentText,
-} from "react-icons/hi"; // all v1 icons
-import { HiBars3BottomRight } from "react-icons/hi2"; // only this one is from v2
-import { IoMdClose, IoLogoYoutube } from "react-icons/io"; // single import, no duplicates
+} from "react-icons/hi";
+import { HiBars3BottomRight } from "react-icons/hi2";
+import { IoMdClose, IoLogoYoutube } from "react-icons/io";
 import { Link } from "react-router-dom";
 
 function Navbar() {
   const navDrawerRef = useRef(null);
+  const featuresDropdownRef = useRef(null);
   const [navDrawerOpen, setNavDrawerOpen] = useState(false);
   const [featuresDropdownOpen, setFeaturesDropdownOpen] = useState(false);
 
@@ -22,18 +23,26 @@ function Navbar() {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
+      // Close features dropdown if clicked outside
+      if (
+        featuresDropdownRef.current &&
+        !featuresDropdownRef.current.contains(event.target) &&
+        !event.target.closest(".features-dropdown-trigger")
+      ) {
+        setFeaturesDropdownOpen(false);
+      }
+
+      // Close mobile nav drawer if clicked outside
       if (
         navDrawerRef.current &&
-        !navDrawerRef.current.contains(event.target)
+        !navDrawerRef.current.contains(event.target) &&
+        !event.target.closest(".mobile-toggle-button")
       ) {
         setNavDrawerOpen(false);
-        setFeaturesDropdownOpen(false);
       }
     };
 
-    if (navDrawerOpen || featuresDropdownOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
+    document.addEventListener("mousedown", handleClickOutside);
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
@@ -65,11 +74,10 @@ function Navbar() {
             </Link>
 
             {/* Features with Dropdown */}
-            <div className="relative">
+            <div className="relative" ref={featuresDropdownRef}>
               <button
-                onMouseEnter={() => setFeaturesDropdownOpen(true)}
-                onMouseLeave={() => setFeaturesDropdownOpen(false)}
-                className="text-sm font-medium hover:text-blue-600 transition-colors flex items-center gap-1"
+                onClick={toggleFeaturesDropdown}
+                className="features-dropdown-trigger text-sm font-medium hover:text-blue-600 transition-colors flex items-center gap-1"
               >
                 Features
                 <svg
@@ -91,14 +99,11 @@ function Navbar() {
               </button>
 
               {featuresDropdownOpen && (
-                <div
-                  onMouseEnter={() => setFeaturesDropdownOpen(true)}
-                  onMouseLeave={() => setFeaturesDropdownOpen(false)}
-                  className="absolute top-full left-0 mt-2 w-[90vw] max-w-[700px] bg-white shadow-xl border rounded-lg py-4 z-50 grid grid-cols-1 sm:grid-cols-2 gap-4 p-4"
-                >
+                <div className="absolute top-full -left-52 mt-2 w-[90vw] max-w-[700px] bg-white shadow-xl border rounded-lg py-4 z-50 grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">
                   <Link
                     to="/ai-transcription"
                     className="flex items-start p-3 rounded-lg hover:bg-gray-50 transition-colors group"
+                    onClick={() => setFeaturesDropdownOpen(false)}
                   >
                     <div className="bg-blue-100 p-2 rounded-md mr-3 group-hover:bg-blue-200 transition-colors">
                       <HiOutlineMicrophone className="w-5 h-5 text-blue-600" />
@@ -116,6 +121,7 @@ function Navbar() {
                   <Link
                     to="/video-downloader"
                     className="flex items-start p-3 rounded-lg hover:bg-gray-50 transition-colors group"
+                    onClick={() => setFeaturesDropdownOpen(false)}
                   >
                     <div className="bg-green-100 p-2 rounded-md mr-3 group-hover:bg-green-200 transition-colors">
                       <HiOutlineDownload className="w-5 h-5 text-green-600" />
@@ -133,6 +139,7 @@ function Navbar() {
                   <Link
                     to="/video-to-text"
                     className="flex items-start p-3 rounded-lg hover:bg-gray-50 transition-colors group"
+                    onClick={() => setFeaturesDropdownOpen(false)}
                   >
                     <div className="bg-purple-100 p-2 rounded-md mr-3 group-hover:bg-purple-200 transition-colors">
                       <HiOutlineVideoCamera className="w-5 h-5 text-purple-600" />
@@ -150,6 +157,7 @@ function Navbar() {
                   <Link
                     to="/youtube-downloader"
                     className="flex items-start p-3 rounded-lg hover:bg-gray-50 transition-colors group"
+                    onClick={() => setFeaturesDropdownOpen(false)}
                   >
                     <div className="bg-red-100 p-2 rounded-md mr-3 group-hover:bg-red-200 transition-colors">
                       <IoLogoYoutube className="w-5 h-5 text-red-600" />
@@ -167,6 +175,7 @@ function Navbar() {
                   <Link
                     to="/audio-to-text"
                     className="flex items-start p-3 rounded-lg hover:bg-gray-50 transition-colors group"
+                    onClick={() => setFeaturesDropdownOpen(false)}
                   >
                     <div className="bg-yellow-100 p-2 rounded-md mr-3 group-hover:bg-yellow-200 transition-colors">
                       <HiOutlineMicrophone className="w-5 h-5 text-yellow-600" />
@@ -184,6 +193,7 @@ function Navbar() {
                   <Link
                     to="/transcribe-translation"
                     className="flex items-start p-3 rounded-lg hover:bg-gray-50 transition-colors group"
+                    onClick={() => setFeaturesDropdownOpen(false)}
                   >
                     <div className="bg-indigo-100 p-2 rounded-md mr-3 group-hover:bg-indigo-200 transition-colors">
                       <HiOutlineTranslate className="w-5 h-5 text-indigo-600" />
@@ -201,6 +211,7 @@ function Navbar() {
                   <Link
                     to="/youtube-transcript"
                     className="flex items-start p-3 rounded-lg hover:bg-gray-50 transition-colors group"
+                    onClick={() => setFeaturesDropdownOpen(false)}
                   >
                     <div className="bg-pink-100 p-2 rounded-md mr-3 group-hover:bg-pink-200 transition-colors">
                       <HiOutlineDocumentText className="w-5 h-5 text-pink-600" />
@@ -222,21 +233,14 @@ function Navbar() {
               to="/pricing"
               className="text-sm font-medium hover:text-blue-600 transition-colors"
             >
-              Pricing
+              About
             </Link>
 
             <Link
               to="/affiliate"
               className="text-sm font-medium hover:text-blue-600 transition-colors"
             >
-              Join Affiliate
-            </Link>
-
-            <Link
-              to="/blogs"
-              className="text-sm font-medium hover:text-blue-600 transition-colors"
-            >
-              Blogs
+              Contact
             </Link>
           </div>
 
@@ -248,7 +252,10 @@ function Navbar() {
             >
               <HiOutlineUsers className="h-6 w-6" />
             </Link>
-            <button onClick={toggleNavDrawer} className="md:hidden">
+            <button
+              onClick={toggleNavDrawer}
+              className="md:hidden mobile-toggle-button"
+            >
               <HiBars3BottomRight className="h-6 w-6" />
             </button>
           </div>
@@ -276,7 +283,7 @@ function Navbar() {
           <nav className="space-y-2">
             <Link
               to="/"
-              className="block py-3 px-4 hover:bg-blue-50 rounded-lg transition-colors"
+              className="block py-3 px-4 text-gray-700 hover:bg-blue-50 rounded-lg transition-colors"
               onClick={toggleNavDrawer}
             >
               Home
@@ -286,7 +293,7 @@ function Navbar() {
             <div>
               <button
                 onClick={toggleFeaturesDropdown}
-                className="flex justify-between w-full py-3 px-4 hover:bg-blue-50 rounded-lg transition-colors"
+                className="flex justify-between w-full py-3 px-4 text-gray-700 hover:bg-blue-50 rounded-lg transition-colors"
               >
                 <span>Features</span>
                 <span>{featuresDropdownOpen ? "-" : "+"}</span>
@@ -355,26 +362,18 @@ function Navbar() {
 
             <Link
               to="/pricing"
-              className="block py-3 px-4 hover:bg-blue-50 rounded-lg transition-colors"
+              className="block py-3 px-4 text-gray-700 hover:bg-blue-50 rounded-lg transition-colors"
               onClick={toggleNavDrawer}
             >
-              Pricing
+              About
             </Link>
 
             <Link
               to="/affiliate"
-              className="block py-3 px-4 hover:bg-blue-50 rounded-lg transition-colors"
+              className="block py-3 px-4 text-gray-700 hover:bg-blue-50 rounded-lg transition-colors"
               onClick={toggleNavDrawer}
             >
-              Join Affiliate
-            </Link>
-
-            <Link
-              to="/blogs"
-              className="block py-3 px-4 hover:bg-blue-50 rounded-lg transition-colors"
-              onClick={toggleNavDrawer}
-            >
-              Blogs
+              Contact
             </Link>
           </nav>
         </div>
