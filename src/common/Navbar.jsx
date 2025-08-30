@@ -42,13 +42,13 @@ function Navbar() {
 
   return (
     <>
-      <nav className="bg-white shadow-sm">
+      <nav className="bg-secondary text-white border-t-2">
         <div className="container mx-auto flex justify-between px-6 py-4 items-center">
           {/* Left - Logo */}
           <div>
             <Link to="/">
               <img
-                src="/logo-light.png"
+                src="/logo-dark.png"
                 alt="Shoppy Logo"
                 className="w-24 md:w-28 lg:w-32 object-contain"
               />
@@ -59,7 +59,7 @@ function Navbar() {
           <div className="hidden md:flex items-center space-x-8 relative">
             <Link
               to="/"
-              className="text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors"
+              className="text-sm font-medium  hover:text-blue-600 transition-colors"
             >
               Home
             </Link>
@@ -69,7 +69,7 @@ function Navbar() {
               <button
                 onMouseEnter={() => setFeaturesDropdownOpen(true)}
                 onMouseLeave={() => setFeaturesDropdownOpen(false)}
-                className="text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors flex items-center gap-1"
+                className="text-sm font-medium hover:text-blue-600 transition-colors flex items-center gap-1"
               >
                 Features
                 <svg
@@ -220,21 +220,21 @@ function Navbar() {
 
             <Link
               to="/pricing"
-              className="text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors"
+              className="text-sm font-medium hover:text-blue-600 transition-colors"
             >
               Pricing
             </Link>
 
             <Link
               to="/affiliate"
-              className="text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors"
+              className="text-sm font-medium hover:text-blue-600 transition-colors"
             >
               Join Affiliate
             </Link>
 
             <Link
               to="/blogs"
-              className="text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors"
+              className="text-sm font-medium hover:text-blue-600 transition-colors"
             >
               Blogs
             </Link>
@@ -246,7 +246,7 @@ function Navbar() {
               to="/profile"
               className="hover:text-blue-600 transition-colors"
             >
-              <HiOutlineUsers className="h-6 w-6 text-gray-700" />
+              <HiOutlineUsers className="h-6 w-6" />
             </Link>
             <button onClick={toggleNavDrawer} className="md:hidden">
               <HiBars3BottomRight className="h-6 w-6" />
@@ -276,7 +276,7 @@ function Navbar() {
           <nav className="space-y-2">
             <Link
               to="/"
-              className="block py-3 px-4 text-gray-700 hover:bg-blue-50 rounded-lg transition-colors"
+              className="block py-3 px-4 hover:bg-blue-50 rounded-lg transition-colors"
               onClick={toggleNavDrawer}
             >
               Home
@@ -286,7 +286,7 @@ function Navbar() {
             <div>
               <button
                 onClick={toggleFeaturesDropdown}
-                className="flex justify-between w-full py-3 px-4 text-gray-700 hover:bg-blue-50 rounded-lg transition-colors"
+                className="flex justify-between w-full py-3 px-4 hover:bg-blue-50 rounded-lg transition-colors"
               >
                 <span>Features</span>
                 <span>{featuresDropdownOpen ? "-" : "+"}</span>
@@ -355,7 +355,7 @@ function Navbar() {
 
             <Link
               to="/pricing"
-              className="block py-3 px-4 text-gray-700 hover:bg-blue-50 rounded-lg transition-colors"
+              className="block py-3 px-4 hover:bg-blue-50 rounded-lg transition-colors"
               onClick={toggleNavDrawer}
             >
               Pricing
@@ -363,7 +363,7 @@ function Navbar() {
 
             <Link
               to="/affiliate"
-              className="block py-3 px-4 text-gray-700 hover:bg-blue-50 rounded-lg transition-colors"
+              className="block py-3 px-4 hover:bg-blue-50 rounded-lg transition-colors"
               onClick={toggleNavDrawer}
             >
               Join Affiliate
@@ -371,7 +371,7 @@ function Navbar() {
 
             <Link
               to="/blogs"
-              className="block py-3 px-4 text-gray-700 hover:bg-blue-50 rounded-lg transition-colors"
+              className="block py-3 px-4 hover:bg-blue-50 rounded-lg transition-colors"
               onClick={toggleNavDrawer}
             >
               Blogs
