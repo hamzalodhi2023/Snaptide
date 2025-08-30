@@ -28,7 +28,7 @@ just like a tide that flows seamlessly.
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/snaptide.git
+git clone https://github.com/hamzalodhi2023/snaptide.git
 
 # Navigate into the project folder
 cd snaptide
@@ -47,7 +47,7 @@ npm run dev
 ```
 
 Then open your browser at:  
-👉 `http://localhost:3000`
+👉 `http://localhost:5173`
 
 ---
 
