@@ -66,7 +66,7 @@ function Navbar() {
 
   return (
     <>
-      <nav className="bg-secondary text-white border-t-2 border-accent">
+      <nav className="bg-secondary text-white">
         <div className="container mx-auto flex justify-between px-6 py-4 items-center">
           {/* Left - Logo */}
           <div>
@@ -245,14 +245,14 @@ function Navbar() {
             </div>
 
             <Link
-              to="/pricing"
+              to="/about"
               className="text-sm font-medium hover:text-blue-600 transition-colors"
             >
               About
             </Link>
 
             <Link
-              to="/affiliate"
+              to="/contact"
               className="text-sm font-medium hover:text-blue-600 transition-colors"
             >
               Contact
@@ -402,7 +402,7 @@ function Navbar() {
             </div>
 
             <Link
-              to="/pricing"
+              to="/about"
               className="block py-3 px-4 text-gray-700 hover:bg-blue-50 rounded-lg transition-colors"
               onClick={() => {
                 setNavDrawerOpen(false);
@@ -413,7 +413,7 @@ function Navbar() {
             </Link>
 
             <Link
-              to="/affiliate"
+              to="/contact"
               className="block py-3 px-4 text-gray-700 hover:bg-blue-50 rounded-lg transition-colors"
               onClick={() => {
                 setNavDrawerOpen(false);

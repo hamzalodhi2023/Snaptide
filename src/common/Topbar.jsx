@@ -1,6 +1,6 @@
 function Topbar() {
   return (
-    <div className="bg-secondary text-white">
+    <div className="bg-primary text-white">
       <div className="container mx-auto flex items-center justify-between px-4 py-3">
         <div className="flex-grow text-center text-sm">
           <span>Snap instantly. Ride the tide of downloads.</span>
