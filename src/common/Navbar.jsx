@@ -319,7 +319,7 @@ function Navbar() {
       >
         <div className="flex justify-between items-center p-4 border-b border-mint-700">
           <img
-            src="/logo-light.png"
+            src="/logo-dark.png"
             alt="Shoppy Logo"
             className="w-28 object-contain"
           />
