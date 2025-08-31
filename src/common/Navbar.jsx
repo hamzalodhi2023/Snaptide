@@ -66,7 +66,7 @@ function Navbar() {
 
   return (
     <>
-      <nav className="bg-secondary text-white">
+      <nav className="bg-mint-700 text-white">
         <div className="container mx-auto flex justify-between px-6 py-4 items-center">
           {/* Left - Logo */}
           <div>

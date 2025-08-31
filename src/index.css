@@ -4,9 +4,17 @@
   --font-nunito: "Nunito", sans-serif;
   --font-inter: "Inter", serif;
 
-  --color-primary: #34a5dd;
-  --color-secondary: #0c2c45;
-  --color-accent: #183568;
+  --color-mint-50: #e1ecfc;
+  --color-mint-100: #c1d9fa;
+  --color-mint-200: #76b5f5;
+  --color-mint-300: #3b94d9;
+  --color-mint-400: #2a6fa5;
+  --color-mint-500: #1a4c73;
+  --color-mint-600: #0c2c45;
+  --color-mint-700: #082339;
+  --color-mint-800: #051b2d;
+  --color-mint-900: #020f1c;
+  --color-mint-950: #010811;
 }
 
 #root {
