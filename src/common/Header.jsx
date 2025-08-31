@@ -3,7 +3,7 @@ import Topbar from "./Topbar";
 
 function Header() {
   return (
-    <header className="border-b border-gray-200">
+    <header>
       {/* Topbar */}
       <Topbar />
       {/* Navbar */}

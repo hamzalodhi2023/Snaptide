@@ -8,7 +8,7 @@ function UserLayout() {
       {/* Header */}
       <Header />
       {/* Main content */}
-      <main>
+      <main className="bg-secondary">
         <Outlet />
       </main>
       {/* Footer */}
