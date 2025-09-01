@@ -104,7 +104,7 @@ const Contact = () => {
                     <h3 className="text-lg font-semibold text-white mb-1">
                       Location
                     </h3>
-                    <p className="text-mint-200">Pakistan</p>
+                    <p className="text-mint-200">Karachi, Pakistan</p>
                   </div>
                 </div>
               </div>
@@ -180,18 +180,23 @@ const Contact = () => {
               </div>
             </div>
 
-            {/* Map Placeholder */}
-            <div className="bg-mint-800 rounded-2xl p-8 border border-mint-700">
+            {/* Google Map */}
+            <div className="bg-mint-800 rounded-2xl p-6 border border-mint-700">
               <h2 className="text-2xl font-bold text-white mb-6 font-nunito">
                 Our Location
               </h2>
-              <div className="bg-mint-700 rounded-lg h-64 flex items-center justify-center">
-                <div className="text-center">
-                  <FaMapMarkerAlt className="text-mint-300 text-4xl mx-auto mb-2" />
-                  <p className="text-mint-200">
-                    Interactive Map Would Appear Here
-                  </p>
-                </div>
+              <div className="rounded-lg overflow-hidden">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4227.2080075069725!2d66.8979751!3d24.8883686!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3eb3132f9e5d46a5%3A0xe7ba23352648d8ce!2sMusharraf%20colony%20hawkes%20bay%20Town%2C%20Karachi!5e1!3m2!1sen!2s!4v1756715491501!5m2!1sen!2s"
+                  width="100%"
+                  height="300"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  className="rounded-lg"
+                  title="Our Location Map"
+                />
               </div>
             </div>
           </div>
