@@ -1,19 +1,26 @@
 function Home() {
   return (
     <div className="w-full h-[85vh] relative">
-      {/* Background Video */}
+      {/* Show video on md and larger */}
       <video
-        src="https://res.cloudinary.com/dus4rdsek/video/upload/v1756729595/video_x3i8r1.mp4"
+        src="/video.mp4"
         autoPlay
         muted
         loop
-        className="w-full h-full object-cover"
+        className="hidden md:block w-full h-full object-cover"
       />
 
-      {/* Overlay Layer */}
-      <div className="absolute top-0 left-0 w-full h-full  bg-black/60 z-10" />
+      {/* Show image only on small screens */}
+      <img
+        src="/mobile-hero.png"
+        alt="Mobile Hero"
+        className="block md:hidden w-full h-full object-cover"
+      />
 
-      {/* Optional: Content on top of video + overlay */}
+      {/* Overlay */}
+      <div className="absolute top-0 left-0 w-full h-full bg-black/60 z-10" />
+
+      {/* Content */}
       <div className="absolute top-1/2 left-1/2 z-20 transform -translate-x-1/2 -translate-y-1/2 text-white text-center">
         <h1 className="mb-4 text-4xl font-bold tracking-tighter uppercase md:text-8xl font-nunito">
           Welcome to Snaptide
@@ -25,5 +32,4 @@ function Home() {
     </div>
   );
 }
-
 export default Home;
