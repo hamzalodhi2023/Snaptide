@@ -3,7 +3,7 @@ function Home() {
     <div className="w-full h-[85vh] relative">
       {/* Background Video */}
       <video
-        src="/video.mp4"
+        src="https://res.cloudinary.com/dus4rdsek/video/upload/v1756729595/video_x3i8r1.mp4"
         autoPlay
         muted
         loop
