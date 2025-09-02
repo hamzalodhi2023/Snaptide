@@ -6,9 +6,10 @@ function Profile() {
     firstName: "Hanna",
     lastName: "Khan Lodhi",
     email: "hanna.khan@example.com",
-    bio: "Hello, I'm Hanna Khan Lodhi, a passionate Front-End Developer based in Karachi, Pakistan. 💻",
     phone: "",
-    address: "",
+    city: "",
+    state: "",
+    country: "",
   });
   const [passwordData, setPasswordData] = useState({
     currentPassword: "",
@@ -177,35 +178,45 @@ function Profile() {
                 </div>
 
                 <div>
-                  <label className="block text-mint-100 mb-2">Bio</label>
-                  <textarea
-                    name="bio"
-                    value={profileData.bio}
+                  <label className="block text-mint-100 mb-2">
+                    Phone Number
+                  </label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={profileData.phone}
                     onChange={handleProfileChange}
-                    rows="3"
                     className="w-full bg-mint-800 border border-mint-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-mint-400"
-                  ></textarea>
+                  />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-mint-100 mb-2">
-                      Phone Number
-                    </label>
+                    <label className="block text-mint-100 mb-2">City</label>
                     <input
-                      type="tel"
-                      name="phone"
-                      value={profileData.phone}
+                      type="text"
+                      name="city"
+                      value={profileData.city}
                       onChange={handleProfileChange}
                       className="w-full bg-mint-800 border border-mint-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-mint-400"
                     />
                   </div>
                   <div>
-                    <label className="block text-mint-100 mb-2">Address</label>
+                    <label className="block text-mint-100 mb-2">State</label>
                     <input
                       type="text"
-                      name="address"
-                      value={profileData.address}
+                      name="state"
+                      value={profileData.state}
+                      onChange={handleProfileChange}
+                      className="w-full bg-mint-800 border border-mint-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-mint-400"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-mint-100 mb-2">Country</label>
+                    <input
+                      type="text"
+                      name="country"
+                      value={profileData.country}
                       onChange={handleProfileChange}
                       className="w-full bg-mint-800 border border-mint-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-mint-400"
                     />
