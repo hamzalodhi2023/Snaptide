@@ -13,6 +13,15 @@ function Tools() {
       category: "Development",
       comingSoon: true,
     },
+    {
+      id: 1,
+      icon: "⬇️",
+      title: "FB Downloader",
+      description:
+        "Grab HD Facebook Videos Fast Just paste the link. No ads. No wait. 100% secure.",
+      category: "Development",
+      comingSoon: true,
+    },
   ];
 
   const categories = ["All", "Development"];
