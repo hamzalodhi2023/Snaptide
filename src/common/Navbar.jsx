@@ -105,7 +105,7 @@ function Navbar() {
                     : "hover:text-mint-300"
                 }`}
               >
-                Features
+                Tools
                 <svg
                   className={`w-4 h-4 transition-transform ${
                     featuresDropdownOpen ? "rotate-180" : ""
@@ -354,7 +354,7 @@ function Navbar() {
                     : "text-mint-100 hover:bg-mint-700"
                 }`}
               >
-                <span>Features</span>
+                <span>Tools</span>
                 <span>
                   {mobileFeaturesOpen ? <GrFormSubtract /> : <IoMdAdd />}
                 </span>

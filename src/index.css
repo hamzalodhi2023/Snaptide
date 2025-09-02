@@ -17,6 +17,10 @@
   --color-mint-950: #010811;
 }
 
+body {
+  @apply bg-gradient-to-br from-mint-900 to-mint-950 text-white;
+}
+
 #root {
   font-family: "Inter", serif;
   font-optical-sizing: auto;
@@ -33,4 +37,21 @@
     -moz-appearance: textfield;
     appearance: textfield;
   }
+}
+
+/*` features section animation */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out;
+  opacity: 0;
 }
