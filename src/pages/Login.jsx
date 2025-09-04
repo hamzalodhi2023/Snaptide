@@ -3,6 +3,7 @@ import { FcGoogle } from "react-icons/fc";
 import { FaFacebook, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { loginUser } from "../redux/slices/authSlice";
+import { toast } from "react-toastify";
 
 function Login() {
   const dispatch = useDispatch();
