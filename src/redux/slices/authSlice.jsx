@@ -3,7 +3,7 @@ import axios from "axios";
 
 //` SnapTide URL
 
-const URL = import.meta.env.SNAPTIDE_URL;
+const URL = `${import.meta.env.VITE_SNAPTIDE_URL}`;
 
 //` variable for save user login form data
 let userFormStorage = null;
