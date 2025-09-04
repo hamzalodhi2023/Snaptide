@@ -34,16 +34,6 @@ function Register() {
     setIsSubmitting(false);
   };
 
-  const handleGoogleLogin = () => {
-    // Handle Google registration logic here
-    console.log("Google registration");
-  };
-
-  const handleFacebookLogin = () => {
-    // Handle Facebook registration logic here
-    console.log("Facebook registration");
-  };
-
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -224,13 +214,13 @@ function Register() {
           {/* Social Login Buttons */}
           <div className="grid grid-cols-2 gap-4">
             {/* Google Login */}
-            <button
-              onClick={handleGoogleLogin}
+            <a
+              href="http://localhost:9000/auth/google"
               className="flex items-center justify-center gap-2 bg-mint-800 hover:bg-mint-700 text-white py-3 px-4 rounded-lg transition-all duration-200 transform hover:scale-105"
             >
               <FcGoogle className="w-5 h-5" />
               Google
-            </button>
+            </a>
 
             {/* Facebook Login */}
             <button

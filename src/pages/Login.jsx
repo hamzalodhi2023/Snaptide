@@ -151,13 +151,14 @@ function Login() {
           {/* Social Login Buttons */}
           <div className="grid grid-cols-2 gap-4">
             {/* Google Login */}
-            <button
+            <a
+              href="http://localhost:9000/auth/google"
               onClick={handleGoogleLogin}
               className="flex items-center justify-center gap-2 bg-mint-800 hover:bg-mint-700 text-white py-3 px-4 rounded-lg transition-all duration-200 transform hover:scale-105"
             >
               <FcGoogle className="w-5 h-5" />
               Google
-            </button>
+            </a>
 
             {/* Facebook Login */}
             <button
