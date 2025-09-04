@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook, FaEye, FaEyeSlash } from "react-icons/fa";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { loginUser } from "../redux/slices/authSlice";
 
 function Login() {
   const dispatch = useDispatch();
@@ -26,7 +27,7 @@ function Login() {
     setIsSubmitting(true);
 
     try {
-      const result = await dispatch(loginUser(formData)).unwrap();
+      const result = await dispatch(loginUser(formData));
       toast.success("Login successful!");
     } catch (err) {
       toast.error(err?.message || "Login failed!");
