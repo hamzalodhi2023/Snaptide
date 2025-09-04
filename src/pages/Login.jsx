@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook, FaEye, FaEyeSlash } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
 
 function Login() {
+  const dispatch = useDispatch();
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -22,22 +25,14 @@ function Login() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate login process
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    // Handle login logic here
-    console.log("Login attempt:", formData);
-    setIsSubmitting(false);
-  };
-
-  const handleGoogleLogin = () => {
-    // Handle Google login logic here
-    console.log("Google login");
-  };
-
-  const handleFacebookLogin = () => {
-    // Handle Facebook login logic here
-    console.log("Facebook login");
+    try {
+      const result = await dispatch(loginUser(formData)).unwrap();
+      toast.success("Login successful!");
+    } catch (err) {
+      toast.error(err?.message || "Login failed!");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const togglePasswordVisibility = () => {
@@ -153,7 +148,6 @@ function Login() {
             {/* Google Login */}
             <a
               href="http://localhost:9000/auth/google"
-              onClick={handleGoogleLogin}
               className="flex items-center justify-center gap-2 bg-mint-800 hover:bg-mint-700 text-white py-3 px-4 rounded-lg transition-all duration-200 transform hover:scale-105"
             >
               <FcGoogle className="w-5 h-5" />
@@ -161,10 +155,7 @@ function Login() {
             </a>
 
             {/* Facebook Login */}
-            <button
-              onClick={handleFacebookLogin}
-              className="flex items-center justify-center gap-2 bg-mint-800 hover:bg-mint-700 text-white py-3 px-4 rounded-lg transition-all duration-200 transform hover:scale-105"
-            >
+            <button className="flex items-center justify-center gap-2 bg-mint-800 hover:bg-mint-700 text-white py-3 px-4 rounded-lg transition-all duration-200 transform hover:scale-105">
               <FaFacebook className="w-5 h-5 text-blue-400" />
               Facebook
             </button>

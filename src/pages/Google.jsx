@@ -60,49 +60,55 @@ function Google() {
     switch (status) {
       case "success":
         return (
-          <div className="w-16 h-16 bg-green-900/20 rounded-full flex items-center justify-center mb-6">
-            <div className="w-12 h-12 bg-green-800 rounded-full flex items-center justify-center">
-              <svg
-                className="w-6 h-6 text-green-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
+          <div className="flex justify-center">
+            <div className="w-16 h-16 bg-green-900/20 rounded-full flex items-center justify-center mb-6">
+              <div className="w-12 h-12 bg-green-800 rounded-full flex items-center justify-center">
+                <svg
+                  className="w-6 h-6 text-green-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
             </div>
           </div>
         );
       case "error":
         return (
-          <div className="w-16 h-16 bg-red-900/20 rounded-full flex items-center justify-center mb-6">
-            <div className="w-12 h-12 bg-red-800 rounded-full flex items-center justify-center">
-              <svg
-                className="w-6 h-6 text-red-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
+          <div className="flex justify-center">
+            <div className="w-16 h-16 bg-red-900/20 rounded-full flex items-center justify-center mb-6">
+              <div className="w-12 h-12 bg-red-800 rounded-full flex items-center justify-center">
+                <svg
+                  className="w-6 h-6 text-red-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </div>
             </div>
           </div>
         );
       default:
         return (
-          <div className="w-16 h-16 bg-mint-900/20 rounded-full flex items-center justify-center mb-6">
-            <div className="w-12 h-12 bg-mint-800 rounded-full flex items-center justify-center">
-              <FaSpinner className="w-6 h-6 text-mint-300 animate-spin" />
+          <div className="flex justify-center">
+            <div className="w-16 h-16 bg-mint-900/20 rounded-full flex items-center justify-center mb-6">
+              <div className="w-12 h-12 bg-mint-800 rounded-full flex items-center justify-center">
+                <FaSpinner className="w-6 h-6 text-mint-300 animate-spin" />
+              </div>
             </div>
           </div>
         );
@@ -111,9 +117,9 @@ function Google() {
 
   return (
     <div className="min-h-screen bg-mint-950 text-white font-inter flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-md mx-auto flex flex-col items-center">
         {/* Status Card */}
-        <div className="bg-mint-900 rounded-xl p-8 border border-mint-800 shadow-lg text-center">
+        <div className="bg-mint-900 rounded-xl p-8 border border-mint-800 shadow-lg text-center w-full">
           {/* Google Icon */}
           <div className="flex justify-center mb-6">
             <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center p-4">
@@ -135,28 +141,32 @@ function Google() {
               : "Oops! Something went wrong"}
           </h2>
 
-          <p className="text-mint-200 mb-6 leading-relaxed">{message}</p>
+          <p className="text-mint-200 mb-6 leading-relaxed text-center">
+            {message}
+          </p>
 
           {/* Progress Bar */}
           {status === "processing" && (
-            <div className="w-full bg-mint-800 rounded-full h-2 mb-6 overflow-hidden">
+            <div className="w-full bg-mint-800 rounded-full h-2 mb-6 overflow-hidden mx-auto">
               <div className="bg-mint-600 h-2 rounded-full animate-pulse"></div>
             </div>
           )}
 
           {/* Additional Info */}
-          <div className="text-sm text-mint-400">
+          <div className="text-sm text-mint-400 text-center">
             <p>You will be redirected automatically...</p>
           </div>
 
           {/* Manual Redirect Button for Errors */}
           {status === "error" && (
-            <button
-              onClick={() => navigate("/login")}
-              className="mt-6 bg-mint-600 hover:bg-mint-500 text-white font-medium py-2 px-6 rounded-md transition-colors duration-200"
-            >
-              Go to Login
-            </button>
+            <div className="flex justify-center mt-6">
+              <button
+                onClick={() => navigate("/login")}
+                className="bg-mint-600 hover:bg-mint-500 text-white font-medium py-2 px-6 rounded-md transition-colors duration-200"
+              >
+                Go to Login
+              </button>
+            </div>
           )}
         </div>
 
