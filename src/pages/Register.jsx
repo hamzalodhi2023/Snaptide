@@ -1,8 +1,13 @@
 import React, { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook, FaEye, FaEyeSlash } from "react-icons/fa";
+import { useDispatch } from "react-redux";
+import { registerUser } from "../redux/slices/authSlice";
+import { toast } from "react-toastify";
 
 function Register() {
+  const dispatch = useDispatch();
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -24,14 +29,26 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Basic client-side validation
+    if (formData.password !== formData.confirmPassword) {
+      toast.error("Passwords do not match!");
+      return;
+    }
+
     setIsSubmitting(true);
 
-    // Simulate registration process
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    // Handle registration logic here
-    console.log("Registration attempt:", formData);
-    setIsSubmitting(false);
+    try {
+      const result = await dispatch(registerUser(formData)).unwrap();
+      toast.success("Account created successfully!");
+      console.log("User registered:", result);
+      // TODO: Redirect after register if needed
+    } catch (err) {
+      toast.error(err?.message || "Registration failed");
+      console.error("Registration error:", err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const togglePasswordVisibility = () => {
