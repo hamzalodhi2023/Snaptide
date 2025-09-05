@@ -70,7 +70,7 @@ function Register() {
         <div className="bg-mint-900 rounded-xl p-8 border border-mint-800 shadow-lg transform transition-all duration-500 hover:shadow-xl hover:shadow-mint-900/20">
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold font-nunito text-mint-200 mb-2 animate-pulse">
+            <h1 className="text-3xl font-bold font-nunito text-mint-200 mb-2 animate-bounce">
               Create Account
             </h1>
             <p className="text-mint-100">Join us and start your journey</p>
@@ -264,7 +264,7 @@ function Register() {
             <p className="text-mint-100">
               Already have an account?{" "}
               <Link
-                href="/login"
+                to="/login"
                 className="text-mint-400 hover:text-mint-300 font-medium transition-colors duration-200"
               >
                 Sign in

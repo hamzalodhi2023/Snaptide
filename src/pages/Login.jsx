@@ -57,7 +57,7 @@ function Login() {
         <div className="bg-mint-900 rounded-xl p-8 border border-mint-800 shadow-lg">
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold font-nunito text-mint-200 mb-2">
+            <h1 className="text-3xl font-bold font-nunito text-mint-200 mb-2 animate-bounce">
               Welcome Back
             </h1>
             <p className="text-mint-100">Sign in to access your account</p>
