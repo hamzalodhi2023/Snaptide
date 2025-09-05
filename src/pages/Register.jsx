@@ -40,12 +40,12 @@ function Register() {
 
     try {
       const result = await dispatch(registerUser(formData)).unwrap();
-      toast.success("Account created successfully!");
-      console.log("User registered:", result);
+      toast.success("Product added to cart successfully!", {
+        duration: 1000,
+      });
       // TODO: Redirect after register if needed
     } catch (err) {
-      toast.error(err?.message || "Registration failed");
-      console.error("Registration error:", err);
+      toast.error(err?.msg || "Registration failed");
     } finally {
       setIsSubmitting(false);
     }
@@ -73,7 +73,11 @@ function Register() {
           </div>
 
           {/* Register Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form
+            onSubmit={handleSubmit}
+            autoComplete="off"
+            className="space-y-6"
+          >
             {/* Name Fields */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -86,12 +90,13 @@ function Register() {
                 <input
                   type="text"
                   id="firstName"
-                  name="firstName"
+                  autoComplete="off"
                   value={formData.firstName}
                   onChange={handleChange}
                   className="w-full bg-mint-800 border border-mint-700 rounded-lg py-3 px-4 text-white placeholder-mint-400 focus:outline-none focus:ring-2 focus:ring-mint-400 focus:border-transparent transition-all duration-200"
                   placeholder="First name"
                   required
+                  name="firstName"
                 />
               </div>
               <div>
@@ -110,6 +115,7 @@ function Register() {
                   className="w-full bg-mint-800 border border-mint-700 rounded-lg py-3 px-4 text-white placeholder-mint-400 focus:outline-none focus:ring-2 focus:ring-mint-400 focus:border-transparent transition-all duration-200"
                   placeholder="Last name"
                   required
+                  autoComplete="off"
                 />
               </div>
             </div>
@@ -131,6 +137,7 @@ function Register() {
                 className="w-full bg-mint-800 border border-mint-700 rounded-lg py-3 px-4 text-white placeholder-mint-400 focus:outline-none focus:ring-2 focus:ring-mint-400 focus:border-transparent transition-all duration-200"
                 placeholder="Enter your email"
                 required
+                autoComplete="off"
               />
             </div>
 
@@ -152,6 +159,7 @@ function Register() {
                   className="w-full bg-mint-800 border border-mint-700 rounded-lg py-3 px-4 pr-12 text-white placeholder-mint-400 focus:outline-none focus:ring-2 focus:ring-mint-400 focus:border-transparent transition-all duration-200"
                   placeholder="Create password"
                   required
+                  autoComplete="off"
                 />
                 <button
                   type="button"
@@ -185,6 +193,7 @@ function Register() {
                   className="w-full bg-mint-800 border border-mint-700 rounded-lg py-3 px-4 pr-12 text-white placeholder-mint-400 focus:outline-none focus:ring-2 focus:ring-mint-400 focus:border-transparent transition-all duration-200"
                   placeholder="Confirm password"
                   required
+                  autoComplete="off"
                 />
                 <button
                   type="button"
