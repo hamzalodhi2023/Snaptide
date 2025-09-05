@@ -18,8 +18,7 @@ function Profile() {
     confirmPassword: "",
   });
 
-  const { user } = useSelector((state) => state.auth);
-  console.log(user);
+  const { token } = useSelector((state) => state.auth);
 
   useEffect(() => {}, []);
 

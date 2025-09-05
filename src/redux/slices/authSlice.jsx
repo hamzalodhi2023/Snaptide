@@ -9,13 +9,11 @@ const URL = `${import.meta.env.VITE_SNAPTIDE_URL}`;
 let userAccessToken = null;
 
 try {
-  let userAccessToken = localStorage.getItem("accessToken") || null;
-  userAccessToken = accessToken ? accessToken : null;
+  userAccessToken = localStorage.getItem("accessToken") || null;
 } catch (err) {
   userAccessToken = null;
 }
 
-//` initial state for loading and error
 const initialState = {
   token: userAccessToken,
   error: null,
@@ -29,6 +27,7 @@ export const loginUser = createAsyncThunk(
     try {
       const response = await axios.post(`${URL}/auth/login`, userData);
       localStorage.setItem("accessToken", response.data.accessToken);
+      console.log(localStorage.getItem("accessToken"));
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
