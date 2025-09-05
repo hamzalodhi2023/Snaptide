@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { FaSpinner } from "react-icons/fa";
+import { useDispatch } from "react-redux";
+import { setToken } from "../redux/slices/authSlice";
 
 function Google() {
   const navigate = useNavigate();
   const [status, setStatus] = useState("processing");
   const [message, setMessage] = useState("Processing your login...");
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -19,6 +22,7 @@ function Google() {
 
         if (token) {
           localStorage.setItem("accessToken", token);
+          dispatch(setToken(token));
           setStatus("success");
           setMessage("Login successful! Redirecting...");
 
@@ -43,7 +47,7 @@ function Google() {
     };
 
     processLogin();
-  }, [navigate]);
+  }, [navigate, dispatch, location.search]);
 
   const getStatusColor = () => {
     switch (status) {
