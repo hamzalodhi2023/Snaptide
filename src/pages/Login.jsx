@@ -4,7 +4,7 @@ import { FaFacebook, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { loginUser } from "../redux/slices/authSlice";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Login() {
   const dispatch = useDispatch();
@@ -176,12 +176,12 @@ function Login() {
           <div className="text-center mt-8">
             <p className="text-mint-100">
               Don't have an account?{" "}
-              <a
-                href="#"
-                className="text-mint-400 hover:text-mint-300 font-medium transition-colors"
+              <Link
+                to="/register"
+                className="text-mint-400 hoper:text-mint-300 font-medium transition-colors"
               >
                 Sign up
-              </a>
+              </Link>
             </p>
           </div>
         </div>

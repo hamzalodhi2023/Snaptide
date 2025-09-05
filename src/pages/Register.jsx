@@ -4,9 +4,11 @@ import { FaFacebook, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { registerUser } from "../redux/slices/authSlice";
 import { toast } from "react-toastify";
+import { Link, useNavigate } from "react-router-dom";
 
 function Register() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -27,10 +29,9 @@ function Register() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Basic client-side validation
     if (formData.password !== formData.confirmPassword) {
       toast.error("Passwords do not match!");
       return;
@@ -39,13 +40,16 @@ function Register() {
     setIsSubmitting(true);
 
     try {
-      const result = dispatch(registerUser(formData)).unwrap();
-      toast.success("Register successfully!", {
+      const result = await dispatch(registerUser(formData)).unwrap();
+
+      toast.success("Registered successfully!", {
         duration: 1000,
       });
-      // TODO: Redirect after register if needed
+
+      navigate("/login"); // or wherever you want
     } catch (err) {
-      toast.error(err?.msg || "Registration failed");
+      // ✅ Better error fallback
+      toast.error(err?.message || "Registration failed!");
     } finally {
       setIsSubmitting(false);
     }
@@ -259,12 +263,12 @@ function Register() {
           <div className="text-center mt-8">
             <p className="text-mint-100">
               Already have an account?{" "}
-              <a
-                href="#"
+              <Link
+                href="/login"
                 className="text-mint-400 hover:text-mint-300 font-medium transition-colors duration-200"
               >
                 Sign in
-              </a>
+              </Link>
             </p>
           </div>
         </div>

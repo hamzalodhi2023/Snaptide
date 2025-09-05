@@ -12,6 +12,7 @@ import {
 import { HiBars3BottomRight } from "react-icons/hi2";
 import { IoMdClose, IoLogoYoutube } from "react-icons/io";
 import { Link, useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 function Navbar() {
   const navDrawerRef = useRef(null);
@@ -21,6 +22,7 @@ function Navbar() {
   const [featuresDropdownOpen, setFeaturesDropdownOpen] = useState(false);
   const [mobileFeaturesOpen, setMobileFeaturesOpen] = useState(false);
   const location = useLocation();
+  const { token } = useSelector((state) => state.auth);
 
   const toggleNavDrawer = () => setNavDrawerOpen(!navDrawerOpen);
   const toggleFeaturesDropdown = () =>
@@ -285,19 +287,24 @@ function Navbar() {
               className="hover:text-mint-300 transition-colors flex items-center"
             >
               <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-mint-500">
-                <img
-                  src="https://thispersondoesnotexist.com/"
-                  alt="Profile"
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.target.style.display = "none";
-                    e.target.nextSibling.style.display = "flex";
-                  }}
-                />
-                {/* Fallback if image fails to load */}
-                <div className="w-full h-full items-center justify-center bg-mint-600 hidden">
-                  <HiOutlineUsers className="text-white text-xl" />
-                </div>
+                {token ? (
+                  <img
+                    src="https://thispersondoesnotexist.com/"
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.style.display = "none";
+                      e.target.nextElementSibling.style.display = "flex";
+                    }}
+                  />
+                ) : null}
+
+                {/* Fallback icon (show if no token OR image fails) */}
+                {!token && (
+                  <div className="w-full h-full flex items-center justify-center bg-mint-600">
+                    <HiOutlineUsers className="text-white text-xl" />
+                  </div>
+                )}
               </div>
             </Link>
             <button
