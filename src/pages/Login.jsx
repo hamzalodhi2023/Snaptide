@@ -25,13 +25,17 @@ function Login() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
-      const result = dispatch(loginUser(formData));
+      const result = await dispatch(loginUser(formData)).unwrap();
+
       toast.success("Login successful!");
+
+      // ✅ Redirect to homepage
+      navigate("/");
     } catch (err) {
       toast.error(err?.message || "Login failed!");
     } finally {
@@ -42,7 +46,6 @@ function Login() {
       });
     }
   };
-
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
