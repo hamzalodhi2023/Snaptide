@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 function Profile() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("profile");
   const [profileData, setProfileData] = useState({
     firstName: "Hanna",
@@ -20,7 +22,11 @@ function Profile() {
 
   const { token } = useSelector((state) => state.auth);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    if (!token) {
+      navigate("/login");
+    }
+  }, [navigate, token]);
 
   const handleProfileChange = (e) => {
     const { name, value } = e.target;
