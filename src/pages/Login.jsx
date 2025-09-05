@@ -4,9 +4,11 @@ import { FaFacebook, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { loginUser } from "../redux/slices/authSlice";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -23,17 +25,21 @@ function Login() {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
-      const result = await dispatch(loginUser(formData));
+      const result = dispatch(loginUser(formData));
       toast.success("Login successful!");
     } catch (err) {
       toast.error(err?.message || "Login failed!");
     } finally {
       setIsSubmitting(false);
+      setFormData({
+        email: "",
+        password: "",
+      });
     }
   };
 

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 function Profile() {
   const [activeTab, setActiveTab] = useState("profile");
@@ -16,6 +17,11 @@ function Profile() {
     newPassword: "",
     confirmPassword: "",
   });
+
+  const { user } = useSelector((state) => state.auth);
+  console.log(user);
+
+  useEffect(() => {}, []);
 
   const handleProfileChange = (e) => {
     const { name, value } = e.target;

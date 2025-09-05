@@ -27,7 +27,7 @@ function Register() {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
     // Basic client-side validation
@@ -39,8 +39,8 @@ function Register() {
     setIsSubmitting(true);
 
     try {
-      const result = await dispatch(registerUser(formData)).unwrap();
-      toast.success("Product added to cart successfully!", {
+      const result = dispatch(registerUser(formData)).unwrap();
+      toast.success("Register successfully!", {
         duration: 1000,
       });
       // TODO: Redirect after register if needed

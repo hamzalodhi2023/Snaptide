@@ -6,11 +6,18 @@ import axios from "axios";
 const URL = `${import.meta.env.VITE_SNAPTIDE_URL}`;
 
 //` variable for save user login form data
-let userFormStorage = null;
+let userAccessToken = null;
+
+try {
+  let userAccessToken = localStorage.getItem("accessToken") || null;
+  userAccessToken = accessToken ? accessToken : null;
+} catch (err) {
+  userAccessToken = null;
+}
 
 //` initial state for loading and error
 const initialState = {
-  user: userFormStorage,
+  token: userAccessToken,
   error: null,
   loading: false,
 };
@@ -21,8 +28,8 @@ export const loginUser = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${URL}/auth/login`, userData);
-      localStorage.setItem("userToken", response.data.accessToken);
-      return response.data.user;
+      localStorage.setItem("accessToken", response.data.accessToken);
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -35,7 +42,7 @@ export const registerUser = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${URL}/auth/register`, userData);
-      return response.data.user;
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -49,8 +56,8 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
-      state.user = null;
-      localStorage.removeItem("userToken");
+      state.token = null;
+      localStorage.removeItem("accessToken");
     },
   },
   extraReducers: (builder) => {
@@ -61,7 +68,7 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;
+        state.token = action.payload.accessToken;
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
