@@ -253,10 +253,13 @@ function Register() {
             </a>
 
             {/* Facebook Login */}
-            <button className="flex items-center justify-center gap-2 bg-mint-800 hover:bg-mint-700 text-white py-3 px-4 rounded-lg transition-all duration-200 transform hover:scale-105">
+            <a
+              href="http://localhost:9000/auth/facebook"
+              className="flex items-center justify-center gap-2 bg-mint-800 hover:bg-mint-700 text-white py-3 px-4 rounded-lg transition-all duration-200 transform hover:scale-105"
+            >
               <FaFacebook className="w-5 h-5 text-blue-400" />
               Facebook
-            </button>
+            </a>
           </div>
 
           {/* Login Link */}
