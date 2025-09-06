@@ -4,10 +4,28 @@ import { setToken, logout } from "../redux/slices/authSlice";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_SNAPTIDE_URL,
-  withCredentials: true, // for httpOnly refresh token
+  withCredentials: true,
 });
 
-// 1️⃣ REQUEST Interceptor — add access token from Redux
+// 🔁 Token Refresh Handler
+const handleTokenRefresh = async () => {
+  const res = await axios.get(
+    `${import.meta.env.VITE_SNAPTIDE_URL}/auth/refresh`,
+    {
+      withCredentials: true,
+    }
+  );
+
+  const newAccessToken = res.data.accessToken;
+
+  // Redux + localStorage update
+  store.dispatch(setToken(newAccessToken));
+  localStorage.setItem("accessToken", newAccessToken);
+
+  return newAccessToken;
+};
+
+// 1️⃣ Request Interceptor
 api.interceptors.request.use(
   (config) => {
     const token = store.getState().auth.token;
@@ -19,33 +37,20 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// 2️⃣ RESPONSE Interceptor — handle 401 and refresh
+// 2️⃣ Response Interceptor
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
-    // Prevent infinite loop
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       try {
-        // Call refresh token endpoint
-        const res = await axios.get(
-          `${import.meta.env.VITE_SNAPTIDE_URL}/auth/refresh`,
-          {
-            withCredentials: true,
-          }
-        );
-
-        const newAccessToken = res.data.accessToken;
-
-        // Set new token to Redux and localStorage
-        store.dispatch(setToken(newAccessToken));
-        localStorage.setItem("accessToken", newAccessToken);
+        const newToken = await handleTokenRefresh();
 
         // Retry original request with new token
-        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        originalRequest.headers.Authorization = `Bearer ${newToken}`;
         return api(originalRequest);
       } catch (err) {
         store.dispatch(logout());
