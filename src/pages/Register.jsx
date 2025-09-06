@@ -242,23 +242,14 @@ function Register() {
           </div>
 
           {/* Social Login Buttons */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
             {/* Google Login */}
             <a
               href="http://localhost:9000/auth/google"
               className="flex items-center justify-center gap-2 bg-mint-800 hover:bg-mint-700 text-white py-3 px-4 rounded-lg transition-all duration-200 transform hover:scale-105"
             >
               <FcGoogle className="w-5 h-5" />
-              Google
-            </a>
-
-            {/* Facebook Login */}
-            <a
-              href="http://localhost:9000/auth/facebook"
-              className="flex items-center justify-center gap-2 bg-mint-800 hover:bg-mint-700 text-white py-3 px-4 rounded-lg transition-all duration-200 transform hover:scale-105"
-            >
-              <FaFacebook className="w-5 h-5 text-blue-400" />
-              Facebook
+              Continue With Google
             </a>
           </div>
 
