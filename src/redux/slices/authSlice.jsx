@@ -25,14 +25,16 @@ export const loginUser = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
       const res = await axios.post(`${URL}/auth/login`, userData);
+
+      const in15Minutes = new Date(new Date().getTime() + 15 * 60 * 1000);
       Cookies.set("accessToken", res.data.accessToken, {
-        expires: 1 / 1440,
+        expires: in15Minutes,
+        path: "/",
       });
+
       return res.data;
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data || { message: error.message }
-      );
+      return rejectWithValue(error.res?.data || { message: error.message });
     }
   }
 );
@@ -42,12 +44,34 @@ export const registerUser = createAsyncThunk(
   "auth/registerUser",
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${URL}/auth/register`, userData);
-      return response.data;
+      const res = await axios.post(`${URL}/auth/register`, userData);
+      return res.data;
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data || { message: error.message }
-      );
+      return rejectWithValue(error.res?.data || { message: error.message });
+    }
+  }
+);
+
+export const handleTokenRefresh = createAsyncThunk(
+  "auth/refresh",
+  async ({ rejectWithValue }) => {
+    try {
+      const res = await axios.get(`${URL}/auth/refresh`, {
+        withCredentials: true,
+      });
+
+      const newAccessToken = res.data.accessToken;
+
+      //` 🍪 Set 1 min testing cookie
+      const in15Minutes = new Date(new Date().getTime() + 15 * 60 * 1000);
+      Cookies.set("accessToken", newAccessToken, {
+        expires: in15Minutes,
+        path: "/",
+      });
+
+      return newAccessToken;
+    } catch (error) {
+      return rejectWithValue(error.res?.data || { message: error.message });
     }
   }
 );
@@ -58,6 +82,10 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
+    logout: (state) => {
+      state.token = null;
+      Cookies.remove("accessToken");
+    },
     setToken: (state, action) => {
       state.token = action.payload;
     },
@@ -87,9 +115,15 @@ const authSlice = createSlice({
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload?.message || "Register failed";
+      })
+      .addCase(handleTokenRefresh.fulfilled, (state, action) => {
+        state.token = action.payload;
+      })
+      .addCase(handleTokenRefresh.rejected, (state) => {
+        state.token = null;
       });
   },
 });
 
-export const { setToken } = authSlice.actions;
+export const { setToken, logout } = authSlice.actions;
 export default authSlice.reducer;

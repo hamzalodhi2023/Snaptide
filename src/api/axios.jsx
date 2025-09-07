@@ -1,42 +1,39 @@
+// 📁 src/api/axios.js
+
 import axios from "axios";
 import Cookies from "js-cookie";
 import { store } from "../redux/store";
-import { setToken, logout } from "../redux/slices/authSlice";
+import { handleTokenRefresh, logout } from "../redux/slices/authSlice"; // ✅ Thunk import
 
+// 🔧 Axios instance
 const api = axios.create({
   baseURL: import.meta.env.VITE_SNAPTIDE_URL,
   withCredentials: true,
 });
 
-// 🔁 Token Refresh Handler
-const handleTokenRefresh = async () => {
-  const res = await axios.get(
-    `${import.meta.env.VITE_SNAPTIDE_URL}/auth/refresh`,
-    { withCredentials: true }
-  );
+//` 2️⃣ Response interceptor — auto refresh logic using Redux thunk
+api.interceptors.response.use(
+  (res) => res,
+  async (error) => {
+    const originalRequest = error.config;
 
-  const newAccessToken = res.data.accessToken;
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
 
-  // Redux + Cookie update
-  store.dispatch(setToken(newAccessToken));
-  // 1 minute testing cookie
-  const inOneMinute = new Date(new Date().getTime() + 1 * 60 * 1000);
-  Cookies.set("accessToken", newAccessToken, {
-    expires: inOneMinute,
-  });
+      const resultAction = await store.dispatch(handleTokenRefresh());
 
-  return newAccessToken;
-};
-
-// 1️⃣ Request Interceptor
-api.interceptors.request.use(
-  (config) => {
-    const token = Cookies.get("accessToken");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      if (handleTokenRefresh.fulfilled.match(resultAction)) {
+        return api(originalRequest); // 🔁 Retry original request
+      } else {
+        // 🔐 Refresh failed → Logout user
+        store.dispatch(logout());
+        window.location.href = "/login";
+        return Promise.reject("Session expired. Please login again.");
+      }
     }
-    return config;
-  },
-  (error) => Promise.reject(error)
+
+    return Promise.reject(error);
+  }
 );
+
 export default api;
