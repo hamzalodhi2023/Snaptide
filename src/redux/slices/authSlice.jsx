@@ -1,35 +1,38 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 //` SnapTide URL
 
 const URL = `${import.meta.env.VITE_SNAPTIDE_URL}`;
 
-//` variable for save user login form data
-let userAccessToken = null;
-
-try {
-  userAccessToken = localStorage.getItem("accessToken") || null;
-} catch (err) {
-  userAccessToken = null;
-}
-
 const initialState = {
-  token: userAccessToken,
+  token: null,
   error: null,
   loading: false,
 };
+
+//` variable for save user login form dat
+try {
+  initialState.token = Cookies.get("accessToken") || null;
+} catch (err) {
+  initialState.token = null;
+}
 
 //` Create Async Thunk for Login
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${URL}/auth/login`, userData);
-      localStorage.setItem("accessToken", response.data.accessToken);
-      return response.data;
+      const res = await axios.post(`${URL}/auth/login`, userData);
+      Cookies.set("accessToken", res.data.accessToken, {
+        expires: 1 / 1440,
+      });
+      return res.data;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return rejectWithValue(
+        error.response?.data || { message: error.message }
+      );
     }
   }
 );
@@ -42,7 +45,9 @@ export const registerUser = createAsyncThunk(
       const response = await axios.post(`${URL}/auth/register`, userData);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return rejectWithValue(
+        error.response?.data || { message: error.message }
+      );
     }
   }
 );
@@ -53,10 +58,6 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    logout: (state) => {
-      state.token = null;
-      localStorage.removeItem("accessToken");
-    },
     setToken: (state, action) => {
       state.token = action.payload;
     },
@@ -90,5 +91,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout, setToken } = authSlice.actions;
+export const { setToken } = authSlice.actions;
 export default authSlice.reducer;

@@ -4,6 +4,7 @@ import { FcGoogle } from "react-icons/fc";
 import { FaSpinner } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { setToken } from "../redux/slices/authSlice";
+import Cookies from "js-cookie";
 
 function Google() {
   const navigate = useNavigate();
@@ -21,7 +22,9 @@ function Google() {
         await new Promise((resolve) => setTimeout(resolve, 1500));
 
         if (token) {
-          localStorage.setItem("accessToken", token);
+          Cookies.set("accessToken", token, {
+            expires: 1 / 1440,
+          });
           dispatch(setToken(token));
           setStatus("success");
           setMessage("Login successful! Redirecting...");
