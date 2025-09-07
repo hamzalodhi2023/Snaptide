@@ -21,6 +21,7 @@ import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Google from "./pages/Google";
+import Error from "./pages/Error";
 
 function App() {
   return (
@@ -49,6 +50,7 @@ function App() {
               <Route path="login" element={<Login />} />
               <Route path="register" element={<Register />} />
               <Route path="/google/callback" element={<Google />} />
+              <Route path="*" element={<Error />} />
             </Route>
           </Routes>
         </BrowserRouter>
