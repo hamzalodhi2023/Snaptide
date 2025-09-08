@@ -44,12 +44,12 @@ function App() {
           <Routes>
             <Route path="/" element={<UserLayout />}>
               <Route index element={<Home />} />
+              <Route path="register" element={<Register />} />
+              <Route path="login" element={<Login />} />
               <Route path="profile" element={<Profile />} />
+              <Route path="/google/callback" element={<Google />} />
               <Route path="about" element={<About />} />
               <Route path="contact" element={<Contact />} />
-              <Route path="login" element={<Login />} />
-              <Route path="register" element={<Register />} />
-              <Route path="/google/callback" element={<Google />} />
               <Route path="*" element={<Error />} />
             </Route>
           </Routes>

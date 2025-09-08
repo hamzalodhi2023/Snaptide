@@ -24,7 +24,9 @@ export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (userData, { rejectWithValue }) => {
     try {
-      const res = await axios.post(`${URL}/auth/login`, userData);
+      const res = await axios.post(`${URL}/auth/login`, userData, {
+        withCredentials: true,
+      });
 
       const in15Minutes = new Date(new Date().getTime() + 10 * 1000);
       Cookies.set("accessToken", res.data.accessToken, {
