@@ -22,7 +22,7 @@ function Google() {
         await new Promise((resolve) => setTimeout(resolve, 1500));
 
         if (token) {
-          const in15Minutes = new Date(new Date().getTime() + 15 * 60 * 1000);
+          const in15Minutes = new Date(new Date().getTime() + 10 * 1000);
           Cookies.set("accessToken", token, {
             expires: in15Minutes,
             path: "/",

@@ -63,7 +63,7 @@ export const handleTokenRefresh = createAsyncThunk(
       const newAccessToken = res.data.accessToken;
 
       //` 🍪 Set 1 min testing cookie
-      const in15Minutes = new Date(new Date().getTime() + 15 * 60 * 1000);
+      const in15Minutes = new Date(new Date().getTime() + 10 * 1000);
       Cookies.set("accessToken", newAccessToken, {
         expires: in15Minutes,
         path: "/",

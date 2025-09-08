@@ -1,13 +1,9 @@
 import axios from "axios";
+import api from "./axios";
 
 export const fetchUserProfile = async () => {
   try {
-    const res = await axios.get(
-      `${import.meta.env.VITE_SNAPTIDE_URL}/users/get-profile`,
-      {
-        withCredentials: true,
-      }
-    );
+    const res = await api.get("/users/get-profile");
     return res.data;
   } catch (err) {
     throw err;
