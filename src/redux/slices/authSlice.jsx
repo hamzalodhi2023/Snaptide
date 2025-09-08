@@ -26,7 +26,7 @@ export const loginUser = createAsyncThunk(
     try {
       const res = await axios.post(`${URL}/auth/login`, userData);
 
-      const in15Minutes = new Date(new Date().getTime() + 15 * 60 * 1000);
+      const in15Minutes = new Date(new Date().getTime() + 10 * 1000);
       Cookies.set("accessToken", res.data.accessToken, {
         expires: in15Minutes,
         path: "/",
@@ -54,15 +54,16 @@ export const registerUser = createAsyncThunk(
 
 export const handleTokenRefresh = createAsyncThunk(
   "auth/refresh",
-  async ({ rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
+      console.log("🔁 Trying refresh...");
       const res = await axios.get(`${URL}/auth/refresh`, {
         withCredentials: true,
       });
 
       const newAccessToken = res.data.accessToken;
+      console.log("✅ Got new token:", newAccessToken);
 
-      //` 🍪 Set 1 min testing cookie
       const in15Minutes = new Date(new Date().getTime() + 10 * 1000);
       Cookies.set("accessToken", newAccessToken, {
         expires: in15Minutes,
@@ -71,7 +72,10 @@ export const handleTokenRefresh = createAsyncThunk(
 
       return newAccessToken;
     } catch (error) {
-      return rejectWithValue(error.res?.data || { message: error.message });
+      console.error("❌ Refresh error:", error?.response || error.message);
+      return rejectWithValue(
+        error?.response?.data || { message: error.message }
+      );
     }
   }
 );
