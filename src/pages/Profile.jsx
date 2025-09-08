@@ -26,10 +26,10 @@ function Profile() {
   });
 
   useEffect(() => {
-    if (!token) {
+    if (!isLoading && !token) {
       navigate("/login");
     }
-  }, [navigate, token]);
+  }, [token, isLoading, navigate]);
 
   const handleProfileChange = (e) => {
     const { name, value } = e.target;

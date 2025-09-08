@@ -4,6 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import { Provider } from "react-redux";
 import store from "./redux/store";
+import AuthInitializer from "./components/AuthInitializer";
 
 // 🔁 React Query Setup
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -28,6 +29,9 @@ function App() {
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
+          {/* ⬇️ Run auth refresh once after app starts */}
+          <AuthInitializer />
+
           <ToastContainer
             position="top-right"
             autoClose={3000}

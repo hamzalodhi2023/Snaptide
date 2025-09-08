@@ -6,9 +6,8 @@ export const useUser = () => {
   return useQuery({
     queryKey: ["user"],
     queryFn: fetchUserProfile,
-    refetchInterval: 10 * 1000,
-    refetchIntervalInBackground: true,
     refetchOnWindowFocus: false,
     retry: false,
+    staleTime: 60 * 1000, // optional: cache for 60s
   });
 };
