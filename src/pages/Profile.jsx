@@ -1,10 +1,15 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../hooks/useUser";
 
 function Profile() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("profile");
+  const { token } = useSelector((state) => state.auth);
+  const { data, isLoading, isError } = useUser();
+  console.log(data, isLoading, isError);
+
   const [profileData, setProfileData] = useState({
     firstName: "Hanna",
     lastName: "Khan Lodhi",
@@ -19,8 +24,6 @@ function Profile() {
     newPassword: "",
     confirmPassword: "",
   });
-
-  const { token } = useSelector((state) => state.auth);
 
   useEffect(() => {
     if (!token) {

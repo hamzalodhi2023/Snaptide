@@ -1,8 +1,5 @@
-// 📁 src/api/axios.js
-
 import axios from "axios";
-import Cookies from "js-cookie";
-import { store } from "../redux/store";
+import store from "../redux/store";
 import { handleTokenRefresh, logout } from "../redux/slices/authSlice"; // ✅ Thunk import
 
 // 🔧 Axios instance
