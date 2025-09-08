@@ -8,7 +8,7 @@ function Profile() {
   const [activeTab, setActiveTab] = useState("profile");
   const { token } = useSelector((state) => state.auth);
   const { data, isLoading, isError } = useUser();
-  console.log(data, isLoading, isError);
+  console.log(data);
 
   const [profileData, setProfileData] = useState({
     firstName: "Hanna",
