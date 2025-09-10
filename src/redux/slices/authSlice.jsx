@@ -58,23 +58,19 @@ export const handleTokenRefresh = createAsyncThunk(
   "auth/refresh",
   async (_, { rejectWithValue }) => {
     try {
-      console.log("🔁 Trying refresh...");
       const res = await axios.get(`${URL}/auth/refresh`, {
         withCredentials: true,
       });
 
       const newAccessToken = res.data.accessToken;
-      console.log("✅ Got new token:", newAccessToken);
 
       const in15Minutes = new Date(new Date().getTime() + 10 * 1000);
       Cookies.set("accessToken", newAccessToken, {
         expires: in15Minutes,
         path: "/",
       });
-
       return newAccessToken;
     } catch (error) {
-      console.error("❌ Refresh error:", error?.response || error.message);
       return rejectWithValue(
         error?.response?.data || { message: error.message }
       );
