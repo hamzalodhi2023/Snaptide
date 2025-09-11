@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../hooks/useUser";
 import { ScaleLoader } from "react-spinners";
-import { logoutUser } from "../redux/slices/authSlice";
+import { deleteUser, logoutUser } from "../redux/slices/authSlice";
 import { toast } from "react-toastify";
 
 function Profile() {
@@ -12,7 +12,6 @@ function Profile() {
   const [activeTab, setActiveTab] = useState("profile");
   const { token } = useSelector((state) => state.auth);
   const { data, isLoading, isError } = useUser();
-  console.log(data);
 
   const [profileData, setProfileData] = useState({
     firstName: "",
@@ -79,13 +78,16 @@ function Profile() {
   };
 
   const handleDeleteAccount = () => {
-    // Handle account deletion logic here
     if (
       window.confirm(
         "Are you sure you want to delete your account? This action cannot be undone."
       )
     ) {
-      console.log("Account deletion confirmed");
+      dispatch(deleteUser()).then(() => {
+        toast.success("Account deleted successfully!");
+
+        // Optionally redirect user to home or login
+      });
     }
   };
 

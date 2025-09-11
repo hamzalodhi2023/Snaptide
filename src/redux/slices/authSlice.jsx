@@ -69,6 +69,20 @@ export const logoutUser = createAsyncThunk(
   }
 );
 
+//` Create Async Thunk for Logout
+export const deleteUser = createAsyncThunk(
+  "auth/deleteUser",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await api.delete("/users/delete-profile");
+
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(error.res?.data || { message: error.message });
+    }
+  }
+);
+
 export const handleTokenRefresh = createAsyncThunk(
   "auth/refresh",
   async (_, { rejectWithValue }) => {
@@ -147,6 +161,19 @@ const authSlice = createSlice({
       .addCase(logoutUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload?.message || "Login failed";
+      })
+      //` deleteUser
+      .addCase(deleteUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteUser.fulfilled, (state) => {
+        state.loading = false;
+        state.token = null;
+      })
+      .addCase(deleteUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || "Delete failed";
       })
       //` Refresh Token
       .addCase(handleTokenRefresh.fulfilled, (state, action) => {
