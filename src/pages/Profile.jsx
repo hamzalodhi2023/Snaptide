@@ -3,8 +3,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../hooks/useUser";
 import { ScaleLoader } from "react-spinners";
-import { deleteUser, logoutUser, updateUser } from "../redux/slices/authSlice";
+import { logoutUser } from "../redux/slices/authSlice";
 import { toast } from "react-toastify";
+import ProfileTab from "../components/ProfileTab";
 import Account from "../components/Account";
 
 function Profile() {
@@ -17,7 +18,6 @@ function Profile() {
   const [profileData, setProfileData] = useState({
     firstName: "",
     lastName: "",
-    email: "",
     phone: "",
     city: "",
     state: "",
@@ -30,7 +30,6 @@ function Profile() {
     }
   }, [token, isLoading, navigate]);
 
-  // Set user data when it's available
   useEffect(() => {
     if (data) {
       setProfileData({
@@ -44,37 +43,13 @@ function Profile() {
     }
   }, [data]);
 
-  const handleProfileChange = (e) => {
-    const { name, value } = e.target;
-    setProfileData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleProfileSubmit = (e) => {
-    e.preventDefault();
-
-    dispatch(updateUser(profileData))
-      .then((res) => {
-        if (res.meta.requestStatus === "fulfilled") {
-          toast.success("Profile updated successfully!");
-        } else {
-          toast.error("Failed to update profile.");
-        }
-      })
-      .catch(() => {
-        toast.error("An error occurred while updating.");
-      });
-  };
-
   const handleLogout = () => {
     if (window.confirm("Are you sure you want to logout?")) {
       dispatch(logoutUser()).then(() => {
         toast.success("You have been logged out successfully!");
         setTimeout(() => {
-          window.location.href = "/login"; // 🧭 Redirect after toast
-        }, 1500); // ⏱ Wait to show toast before redirect
+          window.location.href = "/login";
+        }, 1500);
       });
     }
   };
@@ -96,7 +71,6 @@ function Profile() {
     );
   }
 
-  // Show error state
   if (isError) {
     return (
       <div className="min-h-screen bg-mint-950 text-white font-inter flex items-center justify-center">
@@ -172,148 +146,14 @@ function Profile() {
           </button>
         </div>
 
-        {/* Profile Tab Content */}
+        {/* Tab Content */}
         {activeTab === "profile" && (
-          <div className="space-y-6">
-            {/* Profile Picture Section */}
-            <div className="bg-mint-900 rounded-lg p-6">
-              <h2 className="text-xl font-nunito font-semibold text-mint-100 mb-4 text-center">
-                Profile Picture
-              </h2>
-
-              <div className="flex flex-col items-center gap-4">
-                <div className="w-20 h-20 rounded-full bg-mint-800 flex items-center justify-center overflow-hidden">
-                  <span className="text-2xl font-bold text-mint-300">
-                    {profileData.firstName[0]}
-                    {profileData.lastName[0]}
-                  </span>
-                </div>
-                <button className="bg-mint-600 hover:bg-mint-500 text-white py-2 px-4 rounded-md text-sm transition-colors">
-                  Change Picture
-                </button>
-              </div>
-            </div>
-
-            {/* Profile Details Form */}
-            <form
-              onSubmit={handleProfileSubmit}
-              className="bg-mint-900 rounded-lg p-6"
-            >
-              <h2 className="text-xl font-nunito font-semibold text-mint-100 mb-4">
-                Profile Details
-              </h2>
-
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-mint-100 mb-2">
-                      First Name
-                    </label>
-                    <input
-                      type="text"
-                      name="firstName"
-                      value={profileData.firstName}
-                      onChange={handleProfileChange}
-                      className="w-full bg-mint-800 border border-mint-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-mint-400"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-mint-100 mb-2">
-                      Last Name
-                    </label>
-                    <input
-                      type="text"
-                      name="lastName"
-                      value={profileData.lastName}
-                      onChange={handleProfileChange}
-                      className="w-full bg-mint-800 border border-mint-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-mint-400"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-mint-100 mb-2">Email</label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={data.user.email}
-                    className="w-full bg-mint-800 border border-mint-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-mint-400"
-                    disabled
-                  />
-                  {data.user?.provider !== "local" && (
-                    <p className="text-mint-400 text-sm mt-1">
-                      Email cannot be changed for {data.user?.provider} accounts
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-mint-100 mb-2">
-                    Phone Number
-                  </label>
-                  <input
-                    type="tel"
-                    maxLength={15}
-                    name="phone"
-                    pattern="^[0-9]{10,15}$"
-                    title="Phone number must be between 10 and 15 digits"
-                    value={profileData.phone}
-                    onChange={handleProfileChange}
-                    className="w-full bg-mint-800 border border-mint-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-mint-400"
-                    placeholder="Enter your phone number"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-mint-100 mb-2">City</label>
-                    <input
-                      type="text"
-                      name="city"
-                      value={profileData.city}
-                      onChange={handleProfileChange}
-                      className="w-full bg-mint-800 border border-mint-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-mint-400"
-                      placeholder="Enter your city"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-mint-100 mb-2">State</label>
-                    <input
-                      type="text"
-                      name="state"
-                      value={profileData.state}
-                      onChange={handleProfileChange}
-                      className="w-full bg-mint-800 border border-mint-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-mint-400"
-                      placeholder="Enter your state"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-mint-100 mb-2">Country</label>
-                    <input
-                      type="text"
-                      name="country"
-                      value={profileData.country}
-                      onChange={handleProfileChange}
-                      className="w-full bg-mint-800 border border-mint-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-mint-400"
-                      placeholder="Enter your country"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-6">
-                <button
-                  type="submit"
-                  className="bg-mint-600 hover:bg-mint-500 text-white font-medium py-2 px-6 rounded-md transition-colors"
-                >
-                  Save Changes
-                </button>
-              </div>
-            </form>
-          </div>
+          <ProfileTab
+            data={data}
+            profileData={profileData}
+            setProfileData={setProfileData}
+          />
         )}
-
-        {/* Account Tab Content */}
         {activeTab === "account" && <Account data={data} />}
       </div>
     </div>
