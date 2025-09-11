@@ -69,13 +69,26 @@ export const logoutUser = createAsyncThunk(
   }
 );
 
-//` Create Async Thunk for Logout
+//` Create Async Thunk for deleteUser
 export const deleteUser = createAsyncThunk(
   "auth/deleteUser",
   async (_, { rejectWithValue }) => {
     try {
       const res = await api.delete("/users/delete-profile");
 
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(error.res?.data || { message: error.message });
+    }
+  }
+);
+
+//` Create Async Thunk for updateUser
+export const updateUser = createAsyncThunk(
+  "auth/updateUser",
+  async (profileData, { rejectWithValue }) => {
+    try {
+      const res = await api.put("/users/update-profile", profileData);
       return res.data;
     } catch (error) {
       return rejectWithValue(error.res?.data || { message: error.message });
@@ -172,6 +185,19 @@ const authSlice = createSlice({
         state.token = null;
       })
       .addCase(deleteUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || "Delete failed";
+      })
+      //` updateUser
+      .addCase(updateUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateUser.fulfilled, (state) => {
+        state.loading = false;
+        // state.token = null;
+      })
+      .addCase(updateUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload?.message || "Delete failed";
       })
