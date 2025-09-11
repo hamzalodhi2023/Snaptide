@@ -12,6 +12,7 @@ function Profile() {
   const [activeTab, setActiveTab] = useState("profile");
   const { token } = useSelector((state) => state.auth);
   const { data, isLoading, isError } = useUser();
+  console.log(data);
 
   const [profileData, setProfileData] = useState({
     firstName: "",
@@ -335,7 +336,7 @@ function Profile() {
         {activeTab === "account" && (
           <div className="space-y-6">
             {/* Change Password Form - Only show for local accounts */}
-            {data?.provider === "local" && (
+            {data.user?.provider === "local" && (
               <form
                 onSubmit={handlePasswordSubmit}
                 className="bg-mint-900 rounded-lg p-6"
