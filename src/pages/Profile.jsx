@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../hooks/useUser";
 import { ScaleLoader } from "react-spinners";
+import { logoutUser } from "../redux/slices/authSlice";
+import { toast } from "react-toastify";
 
 function Profile() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [activeTab, setActiveTab] = useState("profile");
   const { token } = useSelector((state) => state.auth);
   const { data, isLoading, isError } = useUser();
-  console.log(data);
 
   const [profileData, setProfileData] = useState({
     firstName: "",
@@ -87,13 +89,16 @@ function Profile() {
   };
 
   const handleLogout = () => {
-    // Handle logout logic here
     if (window.confirm("Are you sure you want to logout?")) {
-      console.log("User logged out");
+      dispatch(logoutUser()).then(() => {
+        toast.success("You have been logged out successfully!");
+        setTimeout(() => {
+          window.location.href = "/login"; // 🧭 Redirect after toast
+        }, 1500); // ⏱ Wait to show toast before redirect
+      });
     }
   };
 
-  // Show loading state
   if (isLoading) {
     return (
       <div className="min-h-screen bg-mint-950 text-white font-inter flex items-center justify-center">

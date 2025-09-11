@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import Cookies from "js-cookie";
+import api from "../../api/axios";
 
 //` SnapTide URL
 
@@ -19,6 +20,19 @@ try {
   initialState.token = null;
 }
 
+//` Create Async Thunk for Register
+export const registerUser = createAsyncThunk(
+  "auth/registerUser",
+  async (userData, { rejectWithValue }) => {
+    try {
+      const res = await axios.post(`${URL}/auth/register`, userData);
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(error.res?.data || { message: error.message });
+    }
+  }
+);
+
 //` Create Async Thunk for Login
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
@@ -28,7 +42,7 @@ export const loginUser = createAsyncThunk(
         withCredentials: true,
       });
 
-      const in15Minutes = new Date(new Date().getTime() + 10 * 1000);
+      const in15Minutes = new Date(new Date().getTime() + 15 * 60 * 1000);
       Cookies.set("accessToken", res.data.accessToken, {
         expires: in15Minutes,
         path: "/",
@@ -41,12 +55,13 @@ export const loginUser = createAsyncThunk(
   }
 );
 
-//` Create Async Thunk for Register
-export const registerUser = createAsyncThunk(
-  "auth/registerUser",
-  async (userData, { rejectWithValue }) => {
+//` Create Async Thunk for Logout
+export const logoutUser = createAsyncThunk(
+  "auth/logoutUser",
+  async (_, { rejectWithValue }) => {
     try {
-      const res = await axios.post(`${URL}/auth/register`, userData);
+      const res = await api.post("/auth/logout");
+
       return res.data;
     } catch (error) {
       return rejectWithValue(error.res?.data || { message: error.message });
@@ -64,7 +79,7 @@ export const handleTokenRefresh = createAsyncThunk(
 
       const newAccessToken = res.data.accessToken;
 
-      const in15Minutes = new Date(new Date().getTime() + 10 * 1000);
+      const in15Minutes = new Date(new Date().getTime() + 15 * 60 * 1000);
       Cookies.set("accessToken", newAccessToken, {
         expires: in15Minutes,
         path: "/",
@@ -94,18 +109,7 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(loginUser.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(loginUser.fulfilled, (state, action) => {
-        state.loading = false;
-        state.token = action.payload.accessToken;
-      })
-      .addCase(loginUser.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload?.message || "Login failed";
-      })
+      //` Register User
       .addCase(registerUser.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -118,6 +122,33 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload?.message || "Register failed";
       })
+      //` Login User
+      .addCase(loginUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.token = action.payload.accessToken;
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || "Login failed";
+      })
+      //` LogoutUser
+      .addCase(logoutUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(logoutUser.fulfilled, (state, action) => {
+        state.loading = false;
+        // state.user = action.payload;
+      })
+      .addCase(logoutUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || "Login failed";
+      })
+      //` Refresh Token
       .addCase(handleTokenRefresh.fulfilled, (state, action) => {
         state.token = action.payload;
       })
