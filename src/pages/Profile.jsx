@@ -6,7 +6,7 @@ import { ScaleLoader } from "react-spinners";
 import { logoutUser } from "../redux/slices/authSlice";
 import { toast } from "react-toastify";
 import ProfileTab from "../components/ProfileTab";
-import Account from "../components/Account";
+import AccountTab from "../components/AccountTab";
 
 function Profile() {
   const navigate = useNavigate();
@@ -154,7 +154,7 @@ function Profile() {
             setProfileData={setProfileData}
           />
         )}
-        {activeTab === "account" && <Account data={data} />}
+        {activeTab === "account" && <AccountTab data={data} />}
       </div>
     </div>
   );

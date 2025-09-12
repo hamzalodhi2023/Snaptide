@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { deleteUser } from "../redux/slices/authSlice";
 import { toast } from "react-toastify";
 
-function Account({ data }) {
+function AccountTab({ data }) {
   const dispatch = useDispatch();
   const [passwordData, setPasswordData] = useState({
     currentPassword: "",
@@ -140,4 +140,4 @@ function Account({ data }) {
   );
 }
 
-export default Account;
+export default AccountTab;
