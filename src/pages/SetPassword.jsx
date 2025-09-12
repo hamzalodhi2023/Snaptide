@@ -1,5 +1,13 @@
 import { useState } from "react";
-import { FaLock, FaEye, FaEyeSlash, FaCheckCircle } from "react-icons/fa";
+import {
+  FaLock,
+  FaEye,
+  FaEyeSlash,
+  FaCheck,
+  FaTimes,
+  FaArrowLeft,
+} from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 function SetPassword() {
   const [formData, setFormData] = useState({
@@ -18,16 +26,54 @@ function SetPassword() {
     }));
   };
 
+  // Password strength checker (same as register page)
+  const getPasswordStrength = (password) => {
+    if (!password) return { strength: 0, message: "" };
+
+    let strength = 0;
+
+    // Length check
+    if (password.length >= 8) strength += 1;
+
+    // Uppercase check
+    if (/[A-Z]/.test(password)) strength += 1;
+
+    // Lowercase check
+    if (/[a-z]/.test(password)) strength += 1;
+
+    // Number check
+    if (/[0-9]/.test(password)) strength += 1;
+
+    // Special character check
+    if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+
+    let strengthMessage = "";
+    if (strength <= 2) strengthMessage = "Weak";
+    else if (strength <= 4) strengthMessage = "Medium";
+    else strengthMessage = "Strong";
+
+    return { strength, message: strengthMessage };
+  };
+
+  const passwordStrength = getPasswordStrength(formData.newPassword);
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Add your password validation and submission logic here
-    if (formData.newPassword === formData.confirmPassword) {
-      console.log("Password set successfully:", formData.newPassword);
-      setIsSubmitted(true);
-      // You would typically call an API here to update the password
-    } else {
-      alert("Passwords do not match!");
+
+    // Validate password strength
+    if (passwordStrength.strength < 3) {
+      alert("Password is too weak. Please make it stronger.");
+      return;
     }
+
+    if (formData.newPassword !== formData.confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+
+    console.log("Password set successfully:", formData.newPassword);
+    setIsSubmitted(true);
+    // You would typically call an API here to update the password
   };
 
   const toggleNewPasswordVisibility = () => {
@@ -38,14 +84,28 @@ function SetPassword() {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
+  // Password requirement check icons (same as register page)
+  const RequirementCheck = ({ met, text }) => (
+    <div className="flex items-center gap-2">
+      {met ? (
+        <FaCheck className="w-3 h-3 text-green-400" />
+      ) : (
+        <FaTimes className="w-3 h-3 text-red-400" />
+      )}
+      <span className={`text-xs ${met ? "text-green-400" : "text-red-400"}`}>
+        {text}
+      </span>
+    </div>
+  );
+
   if (isSubmitted) {
     return (
       <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-mint-900 to-mint-950">
-        <div className="bg-mint-800 p-8 rounded-2xl shadow-2xl border border-mint-600 max-w-md w-full ">
+        <div className="bg-mint-800 p-8 rounded-2xl shadow-2xl border border-mint-600 max-w-md w-full">
           <div className="text-center">
             <div className="flex justify-center mb-6">
               <div className="bg-green-500/20 p-4 rounded-full">
-                <FaCheckCircle className="w-12 h-12 text-green-400" />
+                <FaCheck className="w-12 h-12 text-green-400" />
               </div>
             </div>
             <h2 className="text-2xl font-nunito font-bold text-mint-100 mb-4">
@@ -55,12 +115,12 @@ function SetPassword() {
               Your password has been updated. You can now use your new password
               to sign in to your account.
             </p>
-            <button
-              onClick={() => setIsSubmitted(false)}
-              className="bg-mint-600 hover:bg-mint-500 text-white font-medium py-3 px-6 rounded-lg transition-colors w-full"
+            <Link
+              to="/profile"
+              className="bg-mint-600 hover:bg-mint-500 text-white font-medium py-3 px-6 rounded-lg transition-colors w-full inline-block"
             >
-              Back to Settings
-            </button>
+              Back to Profile
+            </Link>
           </div>
         </div>
       </div>
@@ -69,7 +129,7 @@ function SetPassword() {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-mint-900 to-mint-950">
-      <div className="bg-mint-800 p-8 rounded-2xl shadow-2xl border border-mint-600 max-w-md w-full ">
+      <div className="bg-mint-800 p-8 rounded-2xl shadow-2xl border border-mint-600 max-w-md w-full">
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
             <div className="bg-mint-700 p-4 rounded-full">
@@ -116,9 +176,66 @@ function SetPassword() {
                 )}
               </button>
             </div>
-            <p className="text-sm text-mint-400 mt-2">
-              Must be at least 8 characters long
-            </p>
+
+            {/* Password Strength Indicator (same as register page) */}
+            {formData.newPassword && (
+              <div className="mt-3">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-xs text-mint-300">
+                    Password strength:
+                  </span>
+                  <span
+                    className={`text-xs font-medium ${
+                      passwordStrength.strength <= 2
+                        ? "text-red-400"
+                        : passwordStrength.strength <= 4
+                        ? "text-yellow-400"
+                        : "text-green-400"
+                    }`}
+                  >
+                    {passwordStrength.message}
+                  </span>
+                </div>
+                <div className="w-full bg-mint-800 rounded-full h-2 mb-3">
+                  <div
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      passwordStrength.strength <= 2
+                        ? "bg-red-500"
+                        : passwordStrength.strength <= 4
+                        ? "bg-yellow-500"
+                        : "bg-green-500"
+                    }`}
+                    style={{
+                      width: `${(passwordStrength.strength / 5) * 100}%`,
+                    }}
+                  ></div>
+                </div>
+
+                {/* Password Requirements (same as register page) */}
+                <div className="grid grid-cols-2 gap-2">
+                  <RequirementCheck
+                    met={formData.newPassword.length >= 8}
+                    text="8+ characters"
+                  />
+                  <RequirementCheck
+                    met={/[A-Z]/.test(formData.newPassword)}
+                    text="Uppercase letter"
+                  />
+                  <RequirementCheck
+                    met={/[a-z]/.test(formData.newPassword)}
+                    text="Lowercase letter"
+                  />
+                  <RequirementCheck
+                    met={/[0-9]/.test(formData.newPassword)}
+                    text="Number"
+                  />
+                  <RequirementCheck
+                    met={/[^A-Za-z0-9]/.test(formData.newPassword)}
+                    text="Special character"
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           <div>
@@ -135,7 +252,15 @@ function SetPassword() {
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                className="w-full bg-mint-700 border border-mint-600 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-mint-400 pr-12"
+                className={`w-full bg-mint-700 border rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-mint-400 pr-12 ${
+                  formData.confirmPassword &&
+                  formData.newPassword !== formData.confirmPassword
+                    ? "border-red-500"
+                    : formData.confirmPassword &&
+                      formData.newPassword === formData.confirmPassword
+                    ? "border-green-500"
+                    : "border-mint-600"
+                }`}
                 placeholder="Confirm your new password"
                 required
                 minLength={8}
@@ -152,49 +277,26 @@ function SetPassword() {
                 )}
               </button>
             </div>
-          </div>
-
-          <div className="bg-mint-700/50 p-4 rounded-lg">
-            <h3 className="text-mint-200 font-medium mb-2">
-              Password Requirements
-            </h3>
-            <ul className="text-sm text-mint-400 space-y-1">
-              <li
-                className={
-                  formData.newPassword.length >= 8 ? "text-green-400" : ""
-                }
-              >
-                • At least 8 characters long
-              </li>
-              <li
-                className={
-                  /[A-Z]/.test(formData.newPassword) ? "text-green-400" : ""
-                }
-              >
-                • One uppercase letter
-              </li>
-              <li
-                className={
-                  /[0-9]/.test(formData.newPassword) ? "text-green-400" : ""
-                }
-              >
-                • One number
-              </li>
-              <li
-                className={
-                  /[^A-Za-z0-9]/.test(formData.newPassword)
-                    ? "text-green-400"
-                    : ""
-                }
-              >
-                • One special character
-              </li>
-            </ul>
+            {formData.confirmPassword &&
+              formData.newPassword !== formData.confirmPassword && (
+                <p className="text-red-400 text-xs mt-1">
+                  Passwords do not match
+                </p>
+              )}
+            {formData.confirmPassword &&
+              formData.newPassword === formData.confirmPassword && (
+                <p className="text-green-400 text-xs mt-1">Passwords match</p>
+              )}
           </div>
 
           <button
             type="submit"
-            className="w-full bg-mint-600 hover:bg-mint-500 text-white font-medium py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
+            disabled={passwordStrength.strength < 3}
+            className={`w-full bg-mint-600 hover:bg-mint-500 text-white font-medium py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2 ${
+              passwordStrength.strength < 3
+                ? "opacity-75 cursor-not-allowed"
+                : ""
+            }`}
           >
             <FaLock className="w-5 h-5" />
             Set Password
