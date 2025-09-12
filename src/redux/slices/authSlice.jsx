@@ -50,7 +50,10 @@ export const loginUser = createAsyncThunk(
 
       return res.data;
     } catch (error) {
-      return rejectWithValue(error.res?.data || { message: error.message });
+      return rejectWithValue({
+        status: error.response?.status,
+        message: error.response?.data?.message || error.message,
+      });
     }
   }
 );

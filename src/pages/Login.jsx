@@ -31,21 +31,22 @@ function Login() {
 
     try {
       const result = await dispatch(loginUser(formData)).unwrap();
-
       toast.success("Login successful!");
-
-      // ✅ Redirect to homepage
       navigate("/");
     } catch (err) {
-      toast.error(err?.message || "Login failed!");
+      if (err?.status === 400) {
+        toast.error("User does not exist");
+      } else if (err?.status === 401) {
+        toast.error("Incorrect password");
+      } else {
+        toast.error(err?.message || "Login failed!");
+      }
     } finally {
       setIsSubmitting(false);
-      setFormData({
-        email: "",
-        password: "",
-      });
+      setFormData({ email: "", password: "" });
     }
   };
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
