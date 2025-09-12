@@ -19,16 +19,25 @@ function AccountTab({ data }) {
     }));
   };
 
-  //`   Delete Account
-  const handleDeleteAccount = () => {
-    if (
-      window.confirm(
-        "Are you sure you want to delete your account? This action cannot be undone."
-      )
-    ) {
-      dispatch(deleteUser()).then(() => {
-        toast.success("Account deleted successfully!");
-      });
+  const handleDeleteAccount = async () => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete your account? This action cannot be undone."
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      const res = await dispatch(deleteUser()).unwrap();
+
+      toast.success("Account deleted successfully!");
+
+      // ⏳ Delay to allow toast to show
+      setTimeout(() => {
+        window.location.reload(); // Or: window.location.href = "/register"
+      }, 1500);
+    } catch (error) {
+      console.error("Account deletion failed:", error);
+      toast.error("Failed to delete account. Please try again.");
     }
   };
 
