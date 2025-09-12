@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
-import { FaFacebook, FaEye, FaEyeSlash } from "react-icons/fa";
+import {
+  FaFacebook,
+  FaEye,
+  FaEyeSlash,
+  FaCheck,
+  FaTimes,
+} from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { registerUser } from "../redux/slices/authSlice";
 import { toast } from "react-toastify";
@@ -29,8 +35,51 @@ function Register() {
     }));
   };
 
+  // Password strength checker
+  const getPasswordStrength = (password) => {
+    if (!password) return { strength: 0, message: "" };
+
+    let strength = 0;
+    let messages = [];
+
+    // Length check
+    if (password.length >= 8) strength += 1;
+    else messages.push("At least 8 characters");
+
+    // Uppercase check
+    if (/[A-Z]/.test(password)) strength += 1;
+    else messages.push("One uppercase letter");
+
+    // Lowercase check
+    if (/[a-z]/.test(password)) strength += 1;
+    else messages.push("One lowercase letter");
+
+    // Number check
+    if (/[0-9]/.test(password)) strength += 1;
+    else messages.push("One number");
+
+    // Special character check
+    if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+    else messages.push("One special character");
+
+    let strengthMessage = "";
+    if (strength <= 2) strengthMessage = "Weak";
+    else if (strength <= 4) strengthMessage = "Medium";
+    else strengthMessage = "Strong";
+
+    return { strength, message: strengthMessage, requirements: messages };
+  };
+
+  const passwordStrength = getPasswordStrength(formData.password);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate password strength
+    if (passwordStrength.strength < 3) {
+      toast.error("Password is too weak. Please make it stronger.");
+      return;
+    }
 
     if (formData.password !== formData.confirmPassword) {
       toast.error("Passwords do not match!");
@@ -46,9 +95,8 @@ function Register() {
         duration: 1000,
       });
 
-      navigate("/login"); // or wherever you want
+      navigate("/login");
     } catch (err) {
-      // ✅ Better error fallback
       toast.error(err?.message || "Registration failed!");
     } finally {
       setIsSubmitting(false);
@@ -63,6 +111,20 @@ function Register() {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
+  // Password requirement check icons
+  const RequirementCheck = ({ met, text }) => (
+    <div className="flex items-center gap-2">
+      {met ? (
+        <FaCheck className="w-3 h-3 text-green-400" />
+      ) : (
+        <FaTimes className="w-3 h-3 text-red-400" />
+      )}
+      <span className={`text-xs ${met ? "text-green-400" : "text-red-400"}`}>
+        {text}
+      </span>
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-mint-950 text-white font-inter flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -70,7 +132,7 @@ function Register() {
         <div className="bg-mint-900 rounded-xl p-8 border border-mint-800 shadow-lg transform transition-all duration-500 hover:shadow-xl hover:shadow-mint-900/20">
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold font-nunito text-mint-200 mb-2 animate-bounce">
+            <h1 className="text-3xl font-bold font-nunito text-mint-200 mb-2">
               Create Account
             </h1>
             <p className="text-mint-100">Join us and start your journey</p>
@@ -177,6 +239,66 @@ function Register() {
                   )}
                 </button>
               </div>
+
+              {/* Password Strength Indicator */}
+              {formData.password && (
+                <div className="mt-3">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-xs text-mint-300">
+                      Password strength:
+                    </span>
+                    <span
+                      className={`text-xs font-medium ${
+                        passwordStrength.strength <= 2
+                          ? "text-red-400"
+                          : passwordStrength.strength <= 4
+                          ? "text-yellow-400"
+                          : "text-green-400"
+                      }`}
+                    >
+                      {passwordStrength.message}
+                    </span>
+                  </div>
+                  <div className="w-full bg-mint-800 rounded-full h-2 mb-3">
+                    <div
+                      className={`h-2 rounded-full transition-all duration-300 ${
+                        passwordStrength.strength <= 2
+                          ? "bg-red-500"
+                          : passwordStrength.strength <= 4
+                          ? "bg-yellow-500"
+                          : "bg-green-500"
+                      }`}
+                      style={{
+                        width: `${(passwordStrength.strength / 5) * 100}%`,
+                      }}
+                    ></div>
+                  </div>
+
+                  {/* Password Requirements */}
+                  <div className="grid grid-cols-2 gap-2">
+                    <RequirementCheck
+                      met={formData.password.length >= 8}
+                      text="8+ characters"
+                    />
+                    <RequirementCheck
+                      met={/[A-Z]/.test(formData.password)}
+                      text="Uppercase letter"
+                    />
+                    <RequirementCheck
+                      met={/[a-z]/.test(formData.password)}
+                      text="Lowercase letter"
+                    />
+                    <RequirementCheck
+                      met={/[0-9]/.test(formData.password)}
+                      text="Number"
+                    />
+                    <RequirementCheck
+                      met={/[^A-Za-z0-9]/.test(formData.password)}
+                      text="Special character"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Confirm Password Field */}
@@ -194,7 +316,15 @@ function Register() {
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  className="w-full bg-mint-800 border border-mint-700 rounded-lg py-3 px-4 pr-12 text-white placeholder-mint-400 focus:outline-none focus:ring-2 focus:ring-mint-400 focus:border-transparent transition-all duration-200"
+                  className={`w-full bg-mint-800 border rounded-lg py-3 px-4 pr-12 text-white placeholder-mint-400 focus:outline-none focus:ring-2 focus:ring-mint-400 focus:border-transparent transition-all duration-200 ${
+                    formData.confirmPassword &&
+                    formData.password !== formData.confirmPassword
+                      ? "border-red-500"
+                      : formData.confirmPassword &&
+                        formData.password === formData.confirmPassword
+                      ? "border-green-500"
+                      : "border-mint-700"
+                  }`}
                   placeholder="Confirm password"
                   required
                   autoComplete="off"
@@ -211,14 +341,26 @@ function Register() {
                   )}
                 </button>
               </div>
+              {formData.confirmPassword &&
+                formData.password !== formData.confirmPassword && (
+                  <p className="text-red-400 text-xs mt-1">
+                    Passwords do not match
+                  </p>
+                )}
+              {formData.confirmPassword &&
+                formData.password === formData.confirmPassword && (
+                  <p className="text-green-400 text-xs mt-1">Passwords match</p>
+                )}
             </div>
 
             {/* Register Button */}
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || passwordStrength.strength < 3}
               className={`w-full bg-mint-600 hover:bg-mint-500 text-white font-medium py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 ${
-                isSubmitting ? "opacity-75 cursor-not-allowed" : ""
+                isSubmitting || passwordStrength.strength < 3
+                  ? "opacity-75 cursor-not-allowed"
+                  : ""
               }`}
             >
               {isSubmitting ? (

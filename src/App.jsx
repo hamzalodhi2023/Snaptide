@@ -23,6 +23,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Google from "./pages/Google";
 import Error from "./pages/Error";
+import SetPassword from "./pages/SetPassword";
 
 function App() {
   return (
@@ -54,6 +55,8 @@ function App() {
               <Route path="/google/callback" element={<Google />} />
               <Route path="about" element={<About />} />
               <Route path="contact" element={<Contact />} />
+              <Route path="contact" element={<Contact />} />
+              <Route path="set-password" element={<SetPassword />} />
               <Route path="*" element={<Error />} />
             </Route>
           </Routes>
