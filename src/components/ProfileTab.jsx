@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { updateUser } from "../redux/slices/authSlice";
 import { toast } from "react-toastify";
 import ProfilePictureUpload from "./ProfilePictureUpload";
+import { FaUser, FaCamera, FaTimes, FaGoogle } from "react-icons/fa";
 
 function ProfileTab({ data, profileData, setProfileData }) {
   const dispatch = useDispatch();
@@ -32,8 +33,8 @@ function ProfileTab({ data, profileData, setProfileData }) {
       });
   };
 
-  // Function to handle dummy image click
-  const handleDummyImageClick = () => {
+  // Function to handle image click for both Google and local users
+  const handleImageClick = () => {
     setShowUploadModal(true);
   };
 
@@ -45,133 +46,76 @@ function ProfileTab({ data, profileData, setProfileData }) {
           Profile Picture
         </h2>
 
-        {isGoogleUser ? (
-          // Google User - Display only, no editing
-          <div className="flex flex-col items-center">
-            <div className="relative">
+        <div className="flex flex-col items-center">
+          {data.user?.avatar ? (
+            // If user has an avatar (Google or local), show it with edit option
+            <div className="relative cursor-pointer" onClick={handleImageClick}>
               <div className="w-32 h-32 rounded-full bg-mint-800 flex items-center justify-center overflow-hidden border-2 border-mint-600">
-                {data.user?.avatar ? (
-                  <img
-                    src={data.user.avatar}
-                    alt="Profile"
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <span className="text-4xl font-bold text-mint-300">
-                    {profileData.firstName?.[0]}
-                    {profileData.lastName?.[0]}
-                  </span>
-                )}
+                <img
+                  src={data.user.avatar}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              {/* Camera icon overlay for editing */}
+              <div className="absolute bottom-0 right-0 bg-mint-600 text-white p-2 rounded-full">
+                <FaCamera className="w-4 h-4" />
               </div>
             </div>
+          ) : (
+            // If no avatar, show dummy image that opens upload modal when clicked
+            <div className="relative cursor-pointer" onClick={handleImageClick}>
+              <div className="w-32 h-32 rounded-full bg-mint-800 flex items-center justify-center overflow-hidden border-2 border-mint-600 border-dashed">
+                {/* Dummy user icon */}
+                <FaUser className="w-16 h-16 text-mint-400" />
+              </div>
 
-            <p className="text-mint-300 mt-4 text-center">
-              Your profile picture is managed by Google and cannot be changed
-              here.
-            </p>
-          </div>
-        ) : (
-          // Local User - Show dummy image if no avatar exists
-          <div className="flex flex-col items-center">
-            {data.user?.avatar ? (
-              // If user has an avatar, show the ProfilePictureUpload component
-              <ProfilePictureUpload
-                profileData={profileData}
-                currentImage={data.user.avatar}
-              />
-            ) : (
-              // If no avatar, show dummy image that opens upload modal when clicked
-              <>
-                <div
-                  className="relative cursor-pointer"
-                  onClick={handleDummyImageClick}
-                >
-                  <div className="w-32 h-32 rounded-full bg-mint-800 flex items-center justify-center overflow-hidden border-2 border-mint-600 border-dashed">
-                    {/* Dummy user icon */}
-                    <svg
-                      className="w-16 h-16 text-mint-400"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </div>
+              {/* Camera icon overlay */}
+              <div className="absolute bottom-0 right-0 bg-mint-600 text-white p-2 rounded-full">
+                <FaCamera className="w-4 h-4" />
+              </div>
+            </div>
+          )}
 
-                  {/* Camera icon overlay */}
-                  <div className="absolute bottom-0 right-0 bg-mint-600 text-white p-2 rounded-full">
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
-                      />
-                    </svg>
-                  </div>
+          {isGoogleUser && (
+            <div className="flex items-center mt-2 text-mint-300">
+              <FaGoogle className="mr-2" />
+              <span>Google account</span>
+            </div>
+          )}
+
+          <p className="text-mint-300 mt-4 text-center">
+            Click on the image to {data.user?.avatar ? "change" : "upload"} your
+            profile picture
+          </p>
+
+          {/* Upload Modal for both Google and local users */}
+          {showUploadModal && (
+            <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+              <div className="bg-mint-900 rounded-lg p-6 w-full max-w-md mx-4">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-xl font-semibold text-mint-100">
+                    {data.user?.avatar ? "Change" : "Upload"} Profile Picture
+                  </h3>
+                  <button
+                    onClick={() => setShowUploadModal(false)}
+                    className="text-mint-300 hover:text-white"
+                  >
+                    <FaTimes className="w-6 h-6" />
+                  </button>
                 </div>
 
-                <p className="text-mint-300 mt-4 text-center">
-                  Click on the image to upload a profile picture
-                </p>
-
-                {/* Upload Modal */}
-                {showUploadModal && (
-                  <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-                    <div className="bg-mint-900 rounded-lg p-6 w-full max-w-md mx-4">
-                      <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-xl font-semibold text-mint-100">
-                          Upload Profile Picture
-                        </h3>
-                        <button
-                          onClick={() => setShowUploadModal(false)}
-                          className="text-mint-300 hover:text-white"
-                        >
-                          <svg
-                            className="w-6 h-6"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M6 18L18 6M6 6l12 12"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-
-                      <ProfilePictureUpload
-                        profileData={profileData}
-                        currentImage={null}
-                        onUploadComplete={() => setShowUploadModal(false)}
-                      />
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        )}
+                <ProfilePictureUpload
+                  profileData={profileData}
+                  currentImage={data.user?.avatar || null}
+                  onUploadComplete={() => setShowUploadModal(false)}
+                  isGoogleUser={isGoogleUser}
+                />
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Profile Details Form */}
