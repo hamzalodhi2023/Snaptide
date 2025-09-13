@@ -170,7 +170,7 @@ function ProfileTab({ data, profileData, setProfileData }) {
           <div>
             <label className="block text-mint-100 mb-2">Phone Number</label>
             <input
-              type="tel"
+              type="text"
               maxLength={15}
               name="phone"
               pattern="^[0-9]{10,15}$"
