@@ -38,6 +38,10 @@ function Login() {
         toast.error("User does not exist");
       } else if (err?.status === 401) {
         toast.error("Incorrect password");
+      } else if (err?.status === 403) {
+        toast.error("Account is disabled or blocked");
+      } else if (err?.status === 500) {
+        toast.error("Server error. Please try again later.");
       } else {
         toast.error(err?.message || "Login failed!");
       }
