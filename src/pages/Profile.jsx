@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useUser } from "../hooks/useUser";
 import { ScaleLoader } from "react-spinners";
-import { logoutUser } from "../redux/slices/authSlice";
 import { toast } from "react-toastify";
+
+import { logoutUser } from "../redux/slices/authSlice";
+import { getProfile } from "../redux/slices/profileSlice"; // ✅ redux thunk
+
 import ProfileTab from "../components/ProfileTab";
 import AccountTab from "../components/AccountTab";
 
@@ -12,8 +14,9 @@ function Profile() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [activeTab, setActiveTab] = useState("profile");
+
   const { token } = useSelector((state) => state.auth);
-  const { data, isLoading, isError } = useUser();
+  const { user, loading, error } = useSelector((state) => state.profile);
 
   const [profileData, setProfileData] = useState({
     firstName: "",
@@ -24,24 +27,26 @@ function Profile() {
     country: "",
   });
 
+  // 🔐 Redirect to login if not authenticated
   useEffect(() => {
-    if (!isLoading && !token) {
+    if (!token) {
       navigate("/login");
     }
-  }, [token, isLoading, navigate]);
+  }, [token, navigate]);
 
+  // 🧠 Fill local state when profile is ready
   useEffect(() => {
-    if (data) {
+    if (user) {
       setProfileData({
-        firstName: data.user.firstName || "",
-        lastName: data.user.lastName || "",
-        phone: data.user.phone || "",
-        city: data.user.city || "",
-        state: data.user.state || "",
-        country: data.user.country || "",
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        phone: user.phone || "",
+        city: user.city || "",
+        state: user.state || "",
+        country: user.country || "",
       });
     }
-  }, [data]);
+  }, [user]);
 
   const handleLogout = () => {
     if (window.confirm("Are you sure you want to logout?")) {
@@ -54,7 +59,8 @@ function Profile() {
     }
   };
 
-  if (isLoading) {
+  // 🔃 Loading State
+  if (loading) {
     return (
       <div className="min-h-screen bg-mint-950 text-white font-inter flex items-center justify-center">
         <div className="text-center">
@@ -71,7 +77,8 @@ function Profile() {
     );
   }
 
-  if (isError) {
+  // ❌ Error State
+  if (error) {
     return (
       <div className="min-h-screen bg-mint-950 text-white font-inter flex items-center justify-center">
         <div className="text-center">
@@ -92,7 +99,7 @@ function Profile() {
           </div>
           <p className="text-mint-200 mb-4">Failed to load profile data.</p>
           <button
-            onClick={() => window.location.reload()}
+            onClick={() => dispatch(getProfile())}
             className="bg-mint-600 hover:bg-mint-500 text-white font-medium py-2 px-6 rounded-md transition-colors"
           >
             Try Again
@@ -102,9 +109,11 @@ function Profile() {
     );
   }
 
+  // ✅ Main UI
   return (
     <div className="min-h-screen bg-mint-950 text-white font-inter p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
+        {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-3xl font-bold font-nunito text-mint-200 mb-2">
@@ -149,12 +158,12 @@ function Profile() {
         {/* Tab Content */}
         {activeTab === "profile" && (
           <ProfileTab
-            data={data}
+            data={user} // ✅ FIXED HERE
             profileData={profileData}
             setProfileData={setProfileData}
           />
         )}
-        {activeTab === "account" && <AccountTab data={data} />}
+        {activeTab === "account" && <AccountTab data={user} />}
       </div>
     </div>
   );

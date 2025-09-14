@@ -1,15 +1,16 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { updateUser } from "../redux/slices/authSlice";
+import { updateProfile } from "../redux/slices/profileSlice";
 import { toast } from "react-toastify";
 import ProfilePictureUpload from "./ProfilePictureUpload";
 import { FaUser, FaCamera, FaTimes, FaGoogle } from "react-icons/fa";
 
 function ProfileTab({ data, profileData, setProfileData }) {
   const dispatch = useDispatch();
-  const isGoogleUser = data.user?.provider === "google";
+  const isGoogleUser = data?.provider === "google";
   const [showUploadModal, setShowUploadModal] = useState(false);
 
+  if (!data) return null;
   const handleProfileChange = (e) => {
     const { name, value } = e.target;
     setProfileData((prev) => ({
@@ -20,7 +21,7 @@ function ProfileTab({ data, profileData, setProfileData }) {
 
   const handleProfileSubmit = (e) => {
     e.preventDefault();
-    dispatch(updateUser(profileData))
+    dispatch(updateProfile(profileData))
       .then((res) => {
         if (res.meta.requestStatus === "fulfilled") {
           toast.success("Profile updated successfully!");
@@ -47,12 +48,12 @@ function ProfileTab({ data, profileData, setProfileData }) {
         </h2>
 
         <div className="flex flex-col items-center">
-          {data.user?.avatar ? (
+          {data?.avatar.url ? (
             // If user has an avatar (Google or local), show it with edit option
             <div className="relative cursor-pointer" onClick={handleImageClick}>
               <div className="w-32 h-32 rounded-full bg-mint-800 flex items-center justify-center overflow-hidden border-2 border-mint-600">
                 <img
-                  src={data.user.avatar}
+                  src={data?.avatar.url}
                   alt="Profile"
                   className="w-full h-full object-cover"
                 />
@@ -86,7 +87,7 @@ function ProfileTab({ data, profileData, setProfileData }) {
           )}
 
           <p className="text-mint-300 mt-4 text-center">
-            Click on the image to {data.user?.avatar ? "change" : "upload"} your
+            Click on the image to {data?.avatar.url ? "change" : "upload"} your
             profile picture
           </p>
 
@@ -96,7 +97,7 @@ function ProfileTab({ data, profileData, setProfileData }) {
               <div className="bg-mint-900 rounded-lg p-6 w-full max-w-md mx-4">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-xl font-semibold text-mint-100">
-                    {data.user?.avatar ? "Change" : "Upload"} Profile Picture
+                    {data?.avatar.url ? "Change" : "Upload"} Profile Picture
                   </h3>
                   <button
                     onClick={() => setShowUploadModal(false)}
@@ -108,7 +109,7 @@ function ProfileTab({ data, profileData, setProfileData }) {
 
                 <ProfilePictureUpload
                   profileData={profileData}
-                  currentImage={data.user?.avatar || null}
+                  currentImage={data?.avatar.url || null}
                   onUploadComplete={() => setShowUploadModal(false)}
                   isGoogleUser={isGoogleUser}
                 />
@@ -156,13 +157,13 @@ function ProfileTab({ data, profileData, setProfileData }) {
             <input
               type="email"
               name="email"
-              value={data.user.email || ""}
+              value={data.email || ""}
               className="w-full bg-mint-800 border border-mint-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-mint-400"
               disabled
             />
-            {data.user?.provider !== "local" && (
+            {data?.provider !== "local" && (
               <p className="text-mint-400 text-sm mt-1">
-                Email cannot be changed for {data.user?.provider} accounts
+                Email cannot be changed for {data?.provider} accounts
               </p>
             )}
           </div>

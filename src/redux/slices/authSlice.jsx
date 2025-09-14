@@ -1,39 +1,17 @@
+// redux/slices/authSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import Cookies from "js-cookie";
-import api from "../../api/axios";
-
-//` SnapTide URL
 
 const URL = `${import.meta.env.VITE_SNAPTIDE_URL}`;
 
 const initialState = {
-  token: null,
-  error: null,
+  token: Cookies.get("accessToken") || null,
   loading: false,
+  error: null,
 };
 
-//` variable for save user login form dat
-try {
-  initialState.token = Cookies.get("accessToken") || null;
-} catch (err) {
-  initialState.token = null;
-}
-
-//` Create Async Thunk for Register
-export const registerUser = createAsyncThunk(
-  "auth/registerUser",
-  async (userData, { rejectWithValue }) => {
-    try {
-      const res = await axios.post(`${URL}/auth/register`, userData);
-      return res.data;
-    } catch (error) {
-      return rejectWithValue(error.res?.data || { message: error.message });
-    }
-  }
-);
-
-//` Create Async Thunk for Login
+// ✅ Login User
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (userData, { rejectWithValue }) => {
@@ -58,47 +36,22 @@ export const loginUser = createAsyncThunk(
   }
 );
 
-//` Create Async Thunk for Logout
-export const logoutUser = createAsyncThunk(
-  "auth/logoutUser",
-  async (_, { rejectWithValue }) => {
+// ✅ Register User
+export const registerUser = createAsyncThunk(
+  "auth/registerUser",
+  async (userData, { rejectWithValue }) => {
     try {
-      const res = await api.delete("/auth/logout");
-
+      const res = await axios.post(`${URL}/auth/register`, userData);
       return res.data;
     } catch (error) {
-      return rejectWithValue(error.res?.data || { message: error.message });
+      return rejectWithValue(
+        error.response?.data || { message: error.message }
+      );
     }
   }
 );
 
-//` Create Async Thunk for deleteUser
-export const deleteUser = createAsyncThunk(
-  "auth/deleteUser",
-  async (_, { rejectWithValue }) => {
-    try {
-      const res = await api.delete("/users/delete-profile");
-
-      return res.data;
-    } catch (error) {
-      return rejectWithValue(error.res?.data || { message: error.message });
-    }
-  }
-);
-
-//` Create Async Thunk for updateUser
-export const updateUser = createAsyncThunk(
-  "auth/updateUser",
-  async (profileData, { rejectWithValue }) => {
-    try {
-      const res = await api.put("/users/update-profile", profileData);
-      return res.data;
-    } catch (error) {
-      return rejectWithValue(error.res?.data || { message: error.message });
-    }
-  }
-);
-
+// ✅ Refresh Access Token
 export const handleTokenRefresh = createAsyncThunk(
   "auth/refresh",
   async (_, { rejectWithValue }) => {
@@ -114,16 +67,32 @@ export const handleTokenRefresh = createAsyncThunk(
         expires: in15Minutes,
         path: "/",
       });
+
       return newAccessToken;
     } catch (error) {
       return rejectWithValue(
-        error?.response?.data || { message: error.message }
+        error.response?.data || { message: error.message }
       );
     }
   }
 );
 
-//` Slice for Login and Register
+// ✅ Logout User
+export const logoutUser = createAsyncThunk(
+  "auth/logoutUser",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await axios.delete(`${URL}/auth/logout`, {
+        withCredentials: true,
+      });
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || { message: error.message }
+      );
+    }
+  }
+);
 
 const authSlice = createSlice({
   name: "auth",
@@ -139,20 +108,7 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      //` Register User
-      .addCase(registerUser.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(registerUser.fulfilled, (state, action) => {
-        state.loading = false;
-        state.user = action.payload;
-      })
-      .addCase(registerUser.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload?.message || "Register failed";
-      })
-      //` Login User
+      // Login
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -163,56 +119,38 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload?.message || "Login failed";
+        state.error = action.payload?.message;
       })
-      //` LogoutUser
-      .addCase(logoutUser.pending, (state) => {
+
+      // Register
+      .addCase(registerUser.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(logoutUser.fulfilled, (state, action) => {
+      .addCase(registerUser.fulfilled, (state) => {
         state.loading = false;
-        // state.user = action.payload;
       })
-      .addCase(logoutUser.rejected, (state, action) => {
+      .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload?.message || "Login failed";
+        state.error = action.payload?.message;
       })
-      //` deleteUser
-      .addCase(deleteUser.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(deleteUser.fulfilled, (state) => {
-        state.loading = false;
+
+      // Logout
+      .addCase(logoutUser.fulfilled, (state) => {
         state.token = null;
+        Cookies.remove("accessToken");
       })
-      .addCase(deleteUser.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload?.message || "Delete failed";
-      })
-      //` updateUser
-      .addCase(updateUser.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(updateUser.fulfilled, (state) => {
-        state.loading = false;
-        // state.token = null;
-      })
-      .addCase(updateUser.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload?.message || "Delete failed";
-      })
-      //` Refresh Token
+
+      // Refresh
       .addCase(handleTokenRefresh.fulfilled, (state, action) => {
         state.token = action.payload;
       })
       .addCase(handleTokenRefresh.rejected, (state) => {
         state.token = null;
+        Cookies.remove("accessToken");
       });
   },
 });
 
-export const { setToken, logout } = authSlice.actions;
+export const { logout, setToken } = authSlice.actions;
 export default authSlice.reducer;
