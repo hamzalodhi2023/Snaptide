@@ -22,7 +22,16 @@ function Navbar() {
   const [featuresDropdownOpen, setFeaturesDropdownOpen] = useState(false);
   const [mobileFeaturesOpen, setMobileFeaturesOpen] = useState(false);
   const location = useLocation();
+  const { user } = useSelector((state) => state.profile);
   const { token } = useSelector((state) => state.auth);
+  const [profileImg, setProfileImg] = useState("");
+
+  useEffect(() => {
+    if (user?.avatar?.url) {
+      setProfileImg(user.avatar.url);
+      console.log(user.avatar.url);
+    }
+  }, [user?.avatar?.url]);
 
   const toggleNavDrawer = () => setNavDrawerOpen(!navDrawerOpen);
   const toggleFeaturesDropdown = () =>
@@ -289,7 +298,7 @@ function Navbar() {
               <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-mint-500">
                 {token ? (
                   <img
-                    src="https://thispersondoesnotexist.com/"
+                    src={profileImg}
                     alt="Profile"
                     className="w-full h-full object-cover"
                     onError={(e) => {
