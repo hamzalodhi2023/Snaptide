@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { updateProfile } from "../redux/slices/profileSlice";
 import { toast } from "react-toastify";
@@ -9,6 +9,13 @@ function ProfileTab({ data, profileData, setProfileData }) {
   const dispatch = useDispatch();
   const isGoogleUser = data?.provider === "google";
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [profileImg, setProfileImg] = useState("");
+
+  useEffect(() => {
+    if (data?.avatar?.url) {
+      setProfileImg(data.avatar.url);
+    }
+  }, [data?.avatar?.url]);
 
   if (!data) return null;
   const handleProfileChange = (e) => {
@@ -48,31 +55,26 @@ function ProfileTab({ data, profileData, setProfileData }) {
         </h2>
 
         <div className="flex flex-col items-center">
-          {data?.avatar.url ? (
-            // If user has an avatar (Google or local), show it with edit option
+          {profileImg ? (
             <div className="relative cursor-pointer" onClick={handleImageClick}>
               <div className="w-32 h-32 rounded-full bg-mint-800 flex items-center justify-center overflow-hidden border-2 border-mint-600">
                 <img
-                  src={data?.avatar.url}
+                  src={profileImg}
                   alt="Profile"
                   className="w-full h-full object-cover"
                 />
               </div>
 
-              {/* Camera icon overlay for editing */}
               <div className="absolute bottom-0 right-0 bg-mint-600 text-white p-2 rounded-full">
                 <FaCamera className="w-4 h-4" />
               </div>
             </div>
           ) : (
-            // If no avatar, show dummy image that opens upload modal when clicked
             <div className="relative cursor-pointer" onClick={handleImageClick}>
               <div className="w-32 h-32 rounded-full bg-mint-800 flex items-center justify-center overflow-hidden border-2 border-mint-600 border-dashed">
-                {/* Dummy user icon */}
                 <FaUser className="w-16 h-16 text-mint-400" />
               </div>
 
-              {/* Camera icon overlay */}
               <div className="absolute bottom-0 right-0 bg-mint-600 text-white p-2 rounded-full">
                 <FaCamera className="w-4 h-4" />
               </div>
@@ -87,17 +89,16 @@ function ProfileTab({ data, profileData, setProfileData }) {
           )}
 
           <p className="text-mint-300 mt-4 text-center">
-            Click on the image to {data?.avatar.url ? "change" : "upload"} your
+            Click on the image to {profileImg ? "change" : "upload"} your
             profile picture
           </p>
 
-          {/* Upload Modal for both Google and local users */}
           {showUploadModal && (
             <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
               <div className="bg-mint-900 rounded-lg p-6 w-full max-w-md mx-4">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-xl font-semibold text-mint-100">
-                    {data?.avatar.url ? "Change" : "Upload"} Profile Picture
+                    {profileImg ? "Change" : "Upload"} Profile Picture
                   </h3>
                   <button
                     onClick={() => setShowUploadModal(false)}
@@ -109,7 +110,7 @@ function ProfileTab({ data, profileData, setProfileData }) {
 
                 <ProfilePictureUpload
                   profileData={profileData}
-                  currentImage={data?.avatar.url || null}
+                  currentImage={profileImg || null}
                   onUploadComplete={() => setShowUploadModal(false)}
                   isGoogleUser={isGoogleUser}
                 />
