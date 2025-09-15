@@ -41,9 +41,11 @@ export const updateProfile = createAsyncThunk(
 // ✅ Delete Profile
 export const deleteUser = createAsyncThunk(
   "profile/deleteUser",
-  async (_, { rejectWithValue }) => {
+  async (reason, { rejectWithValue }) => {
     try {
-      const res = await api.delete("/users/delete-profile");
+      const res = await api.delete("/users/delete-profile", {
+        data: reason,
+      });
       return res.data;
     } catch (error) {
       return rejectWithValue(

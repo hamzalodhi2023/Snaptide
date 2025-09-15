@@ -29,7 +29,6 @@ function Navbar() {
   useEffect(() => {
     if (user?.avatar?.url) {
       setProfileImg(user.avatar.url);
-      console.log(user.avatar.url);
     }
   }, [user?.avatar?.url]);
 
@@ -296,7 +295,7 @@ function Navbar() {
               className="hover:text-mint-300 transition-colors flex items-center"
             >
               <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-mint-500">
-                {token ? (
+                {token && profileImg ? (
                   <img
                     src={profileImg}
                     alt="Profile"
@@ -306,7 +305,11 @@ function Navbar() {
                       e.target.nextElementSibling.style.display = "flex";
                     }}
                   />
-                ) : null}
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-mint-600">
+                    <HiOutlineUsers className="text-white text-xl" />
+                  </div>
+                )}
 
                 {/* Fallback icon (show if no token OR image fails) */}
                 {!token && (
