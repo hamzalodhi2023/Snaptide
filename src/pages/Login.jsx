@@ -33,6 +33,7 @@ function Login() {
       const result = await dispatch(loginUser(formData)).unwrap();
       toast.success("Login successful!");
       navigate("/");
+      window.location.reload();
     } catch (err) {
       if (err?.status === 400) {
         toast.error("User does not exist");
