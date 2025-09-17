@@ -271,19 +271,10 @@ function ProfilePictureUpload({ profileData, currentImage }) {
           <div className="flex flex-col items-center">
             <div className="w-40 h-40 rounded-full bg-gray-800 flex items-center justify-center overflow-hidden border-2 border-gray-700 mb-6">
               <img
-                src={croppedImage}
+                src={URL.createObjectURL(croppedImage)}
                 alt="Profile Preview"
                 className="w-full h-full object-cover"
               />
-            </div>
-
-            <p className="text-gray-400 text-center mb-6">Visible to anyone</p>
-
-            <div className="text-sm text-gray-400 bg-gray-800 p-4 rounded-lg mb-6">
-              <p>
-                It could take a day or two to see the change across all of your
-                Google services
-              </p>
             </div>
 
             <div className="flex justify-between w-full">
