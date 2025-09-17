@@ -38,6 +38,29 @@ export const updateProfile = createAsyncThunk(
   }
 );
 
+// ✅ Upload Profile Picture
+export const uploadProfilePicture = createAsyncThunk(
+  "profile/uploadProfilePicture",
+  async (file, { rejectWithValue }) => {
+    try {
+      const formData = new FormData();
+      formData.append("avatar", file); // must match req.file in backend
+
+      const res = await api.put("/uploads/profile", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      return res.data.user;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || { message: error.message }
+      );
+    }
+  }
+);
+
 // ✅ Delete Profile
 export const deleteUser = createAsyncThunk(
   "profile/deleteUser",
@@ -77,13 +100,25 @@ const profileSlice = createSlice({
         state.loading = false;
         state.error = action.payload?.message;
       })
-
       .addCase(updateProfile.fulfilled, (state, action) => {
         state.user = action.payload;
       })
-
       .addCase(deleteUser.fulfilled, (state) => {
         state.user = null;
+      })
+      // ✅ Upload Profile Picture
+      .addCase(uploadProfilePicture.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(uploadProfilePicture.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+      })
+      .addCase(uploadProfilePicture.rejected, (state, action) => {
+        state.loading = false;
+        state.error =
+          action.payload?.message || "Failed to upload profile image";
       });
   },
 });

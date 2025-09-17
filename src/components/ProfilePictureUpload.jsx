@@ -13,6 +13,9 @@ import {
   FaCameraRetro,
 } from "react-icons/fa";
 import getCroppedImg from "../components/CropImage"; // You'll need to create this utility
+import { useDispatch, useSelector } from "react-redux";
+import { uploadProfilePicture } from "../redux/slices/profileSlice";
+import { toast } from "react-toastify";
 
 function ProfilePictureUpload({ profileData, currentImage }) {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -24,6 +27,8 @@ function ProfilePictureUpload({ profileData, currentImage }) {
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const fileInputRef = useRef(null);
   const webcamRef = useRef(null);
+  const dispatch = useDispatch();
+  const { loading } = useSelector((state) => state.profile);
 
   const handleImageSelect = (event) => {
     const file = event.target.files[0];
@@ -66,13 +71,23 @@ function ProfilePictureUpload({ profileData, currentImage }) {
     setView("upload");
   };
 
-  const handleSave = () => {
-    // Handle image upload logic here
-    console.log("Saving image:", croppedImage);
-    // You would typically upload to your server here
-    setView("upload");
-  };
+  const handleSave = async () => {
+    if (!croppedImage) return;
 
+    const file = new File([croppedImage], "avatar.jpg", {
+      type: "image/jpeg",
+    });
+
+    try {
+      await dispatch(uploadProfilePicture(file)).unwrap();
+      window.location.reload();
+      toast.success("Profile picture updated successfully!");
+      setView("upload");
+    } catch (err) {
+      console.error("Upload failed:", err);
+      toast.error("Failed to upload profile picture.");
+    }
+  };
   const handleDragOver = (e) => {
     e.preventDefault();
   };
