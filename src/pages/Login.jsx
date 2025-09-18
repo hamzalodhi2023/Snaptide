@@ -52,6 +52,8 @@ function Login() {
     }
   };
 
+  const handleForgot = () => {};
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -100,12 +102,12 @@ function Login() {
                 >
                   Password
                 </label>
-                <a
-                  href="#"
+                <button
+                  onClick={handleForgot}
                   className="text-sm text-mint-400 hover:text-mint-300 transition-colors"
                 >
                   Forgot Password?
-                </a>
+                </button>
               </div>
               <div className="relative">
                 <input

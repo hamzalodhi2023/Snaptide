@@ -2,6 +2,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import Cookies from "js-cookie";
+import api from "../../api/axios";
 
 const URL = `${import.meta.env.VITE_SNAPTIDE_URL}`;
 
@@ -9,6 +10,11 @@ const initialState = {
   token: Cookies.get("accessToken") || null,
   loading: false,
   error: null,
+
+  // 🆕 Forgot Password
+  forgotLoading: false,
+  forgotSuccessMessage: null,
+  forgotError: null,
 };
 
 // ✅ Login User
@@ -94,6 +100,21 @@ export const logoutUser = createAsyncThunk(
   }
 );
 
+// ✅ Forgot Password
+export const forgotPassword = createAsyncThunk(
+  "auth/forgotPassword",
+  async (email, { rejectWithValue }) => {
+    try {
+      const res = await api.post("/auth/forgot-password", { email });
+      return res.data; // Assuming response has a message like { message: "Email sent" }
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || { message: error.message }
+      );
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -141,13 +162,27 @@ const authSlice = createSlice({
         Cookies.remove("accessToken");
       })
 
-      // Refresh
+      // Refresh1
       .addCase(handleTokenRefresh.fulfilled, (state, action) => {
         state.token = action.payload;
       })
       .addCase(handleTokenRefresh.rejected, (state) => {
         state.token = null;
         Cookies.remove("accessToken");
+      })
+      // Forgot Password
+      .addCase(forgotPassword.pending, (state) => {
+        state.forgotLoading = true;
+        state.forgotSuccessMessage = null;
+        state.forgotError = null;
+      })
+      .addCase(forgotPassword.fulfilled, (state, action) => {
+        state.forgotLoading = false;
+        state.forgotSuccessMessage = action.payload.message;
+      })
+      .addCase(forgotPassword.rejected, (state, action) => {
+        state.forgotLoading = false;
+        state.forgotError = action.payload?.message || "Something went wrong.";
       });
   },
 });
