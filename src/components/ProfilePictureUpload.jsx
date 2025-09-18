@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import Webcam from "react-webcam";
 import Cropper from "react-easy-crop";
 import {
@@ -9,10 +9,10 @@ import {
   FaTimes,
   FaArrowLeft,
   FaUpload,
-  FaCropAlt,
   FaCameraRetro,
+  FaExclamationTriangle,
 } from "react-icons/fa";
-import getCroppedImg from "../components/CropImage"; // You'll need to create this utility
+import getCroppedImg from "../components/CropImage";
 import { useDispatch, useSelector } from "react-redux";
 import { uploadProfilePicture } from "../redux/slices/profileSlice";
 import { toast } from "react-toastify";
@@ -25,10 +25,35 @@ function ProfilePictureUpload({ profileData, currentImage }) {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [hasCamera, setHasCamera] = useState(true);
+  const [cameraError, setCameraError] = useState("");
   const fileInputRef = useRef(null);
   const webcamRef = useRef(null);
   const dispatch = useDispatch();
   const { loading } = useSelector((state) => state.profile);
+
+  // Check if camera is available
+  useEffect(() => {
+    const checkCameraAvailability = async () => {
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(
+          (device) => device.kind === "videoinput"
+        );
+        setHasCamera(videoDevices.length > 0);
+
+        if (videoDevices.length === 0) {
+          setCameraError("No camera found on this device");
+        }
+      } catch (error) {
+        console.error("Error checking camera availability:", error);
+        setHasCamera(false);
+        setCameraError("Cannot access camera. Please check permissions.");
+      }
+    };
+
+    checkCameraAvailability();
+  }, []);
 
   const handleImageSelect = (event) => {
     const file = event.target.files[0];
@@ -74,13 +99,13 @@ function ProfilePictureUpload({ profileData, currentImage }) {
   const handleSave = async () => {
     if (!croppedImage) return;
 
-    const file = new File([croppedImage], "avatar.jpg", {
-      type: "image/jpeg",
-    });
-
     try {
+      // Convert blob to file
+      const file = new File([croppedImage], "avatar.jpg", {
+        type: "image/jpeg",
+      });
+
       await dispatch(uploadProfilePicture(file)).unwrap();
-      window.location.reload();
       toast.success("Profile picture updated successfully!");
       setView("upload");
     } catch (err) {
@@ -88,6 +113,7 @@ function ProfilePictureUpload({ profileData, currentImage }) {
       toast.error("Failed to upload profile picture.");
     }
   };
+
   const handleDragOver = (e) => {
     e.preventDefault();
   };
@@ -101,10 +127,26 @@ function ProfilePictureUpload({ profileData, currentImage }) {
   };
 
   const captureWebcam = useCallback(() => {
-    const imageSrc = webcamRef.current.getScreenshot();
-    setSelectedImage(imageSrc);
-    setView("crop");
+    try {
+      const imageSrc = webcamRef.current.getScreenshot();
+      setSelectedImage(imageSrc);
+      setView("crop");
+    } catch (error) {
+      console.error("Error capturing image:", error);
+      toast.error("Failed to capture image. Please try again.");
+    }
   }, [webcamRef]);
+
+  const handleWebcamError = (error) => {
+    console.error("Webcam error:", error);
+    setHasCamera(false);
+    setCameraError("Camera access denied. Please check permissions.");
+    toast.error("Camera access denied. Please upload an image instead.");
+  };
+
+  const handleWebcamLoad = () => {
+    setCameraError("");
+  };
 
   return (
     <div className="flex flex-col items-center w-full max-w-md mx-auto bg-gray-900 text-gray-100 rounded-lg overflow-hidden">
@@ -158,45 +200,78 @@ function ProfilePictureUpload({ profileData, currentImage }) {
 
             <button
               onClick={() => setView("webcam")}
-              className="flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-4 py-3 rounded-md transition-colors w-full"
+              disabled={!hasCamera}
+              className="flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-4 py-3 rounded-md transition-colors w-full disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <FaCameraRetro className="w-5 h-5" />
               Take a picture
             </button>
+
+            {!hasCamera && (
+              <div className="bg-red-900/30 border border-red-700 rounded-lg p-4 text-center">
+                <div className="flex items-center justify-center gap-2 text-red-400 mb-2">
+                  <FaExclamationTriangle className="w-5 h-5" />
+                  <span className="font-medium">Camera not available</span>
+                </div>
+                <p className="text-red-300 text-sm">{cameraError}</p>
+              </div>
+            )}
           </div>
         )}
 
         {view === "webcam" && (
           <div className="flex flex-col items-center">
-            <div className="relative w-full h-64 mb-4 rounded-lg overflow-hidden">
-              <Webcam
-                audio={false}
-                ref={webcamRef}
-                screenshotFormat="image/jpeg"
-                className="w-full h-full object-cover"
-                videoConstraints={{
-                  width: 1280,
-                  height: 720,
-                  facingMode: "user",
-                }}
-              />
-            </div>
+            {hasCamera ? (
+              <>
+                <div className="relative w-full h-64 mb-4 rounded-lg overflow-hidden">
+                  <Webcam
+                    audio={false}
+                    ref={webcamRef}
+                    screenshotFormat="image/jpeg"
+                    className="w-full h-full object-cover"
+                    videoConstraints={{
+                      width: 1280,
+                      height: 720,
+                      facingMode: "user",
+                    }}
+                    onUserMedia={handleWebcamLoad}
+                    onUserMediaError={handleWebcamError}
+                  />
+                </div>
 
-            <div className="flex justify-between w-full mt-4">
-              <button
-                onClick={() => setView("upload")}
-                className="text-gray-300 hover:text-white px-4 py-2 rounded-md transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={captureWebcam}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors flex items-center gap-2"
-              >
-                <FaCamera className="w-4 h-4" />
-                Capture
-              </button>
-            </div>
+                <div className="flex justify-between w-full mt-4">
+                  <button
+                    onClick={() => setView("upload")}
+                    className="text-gray-300 hover:text-white px-4 py-2 rounded-md transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={captureWebcam}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors flex items-center gap-2"
+                  >
+                    <FaCamera className="w-4 h-4" />
+                    Capture
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="w-full text-center p-6">
+                <div className="bg-red-900/30 border border-red-700 rounded-lg p-6">
+                  <div className="flex items-center justify-center gap-2 text-red-400 mb-4">
+                    <FaExclamationTriangle className="w-8 h-8" />
+                    <span className="font-medium text-lg">Camera Error</span>
+                  </div>
+                  <p className="text-red-300 mb-4">{cameraError}</p>
+                  <button
+                    onClick={() => setView("upload")}
+                    className="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-md transition-colors"
+                  >
+                    Go Back
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
