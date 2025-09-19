@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FaLock,
   FaEye,
@@ -7,7 +7,11 @@ import {
   FaTimes,
   FaArrowLeft,
 } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import { resetPassword } from "../redux/slices/authSlice";
 
 function SetPassword() {
   const [formData, setFormData] = useState({
@@ -17,6 +21,17 @@ function SetPassword() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token");
+  const id = searchParams.get("id");
+
+  useEffect(() => {
+    if (!token || !id) {
+      navigate("*");
+    }
+  }, [navigate, token, id, dispatch]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -57,23 +72,38 @@ function SetPassword() {
 
   const passwordStrength = getPasswordStrength(formData.newPassword);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate password strength
     if (passwordStrength.strength < 3) {
-      alert("Password is too weak. Please make it stronger.");
+      toast.error("Password is too weak.");
       return;
     }
 
     if (formData.newPassword !== formData.confirmPassword) {
-      alert("Passwords do not match!");
+      toast.error("Passwords do not match!");
       return;
     }
 
-    console.log("Password set successfully:", formData.newPassword);
-    setIsSubmitted(true);
-    // You would typically call an API here to update the password
+    if (!token || !id) {
+      toast.error("Invalid or missing token.");
+      return;
+    }
+
+    try {
+      const res = await dispatch(
+        resetPassword({
+          token,
+          password: formData.newPassword,
+          id, // only if your backend needs it
+        })
+      ).unwrap();
+
+      toast.success(res.message || "Password has been reset!");
+      setIsSubmitted(true);
+    } catch (err) {
+      toast.error(err || "Something went wrong. Try again.");
+    }
   };
 
   const toggleNewPasswordVisibility = () => {

@@ -1,14 +1,17 @@
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook, FaEye, FaEyeSlash } from "react-icons/fa";
-import { useDispatch } from "react-redux";
-import { loginUser } from "../redux/slices/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { forgotPassword, loginUser } from "../redux/slices/authSlice";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 
 function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { forgotLoading, forgotSuccessMessage, forgotError } = useSelector(
+    (state) => state.auth
+  );
 
   const [formData, setFormData] = useState({
     email: "",
@@ -17,6 +20,7 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  //` Form controlled function
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -25,6 +29,7 @@ function Login() {
     }));
   };
 
+  //` Login Data submitting
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -52,7 +57,19 @@ function Login() {
     }
   };
 
-  const handleForgot = () => {};
+  const handleForgot = async () => {
+    if (!formData.email) {
+      toast.error("Please enter your email first.");
+      return;
+    }
+
+    try {
+      const res = await dispatch(forgotPassword(formData.email)).unwrap();
+      toast.success(res.message || "Password reset email sent!");
+    } catch (err) {
+      toast.error(err || "Failed to send reset email");
+    }
+  };
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);

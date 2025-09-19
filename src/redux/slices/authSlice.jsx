@@ -15,6 +15,10 @@ const initialState = {
   forgotLoading: false,
   forgotSuccessMessage: null,
   forgotError: null,
+
+  resetLoading: false,
+  resetSuccessMessage: null,
+  resetError: null,
 };
 
 // ✅ Login User
@@ -115,6 +119,25 @@ export const forgotPassword = createAsyncThunk(
   }
 );
 
+export const resetPassword = createAsyncThunk(
+  "auth/resetPassword",
+  async ({ token, password, id }, { rejectWithValue }) => {
+    try {
+      const res = await axios.put(`${URL}/auth/reset-password`, {
+        newPassword: password,
+        token,
+        userId: id,
+      });
+
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || { message: error.message }
+      );
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -183,6 +206,19 @@ const authSlice = createSlice({
       .addCase(forgotPassword.rejected, (state, action) => {
         state.forgotLoading = false;
         state.forgotError = action.payload?.message || "Something went wrong.";
+      })
+      .addCase(resetPassword.pending, (state) => {
+        state.resetLoading = true;
+        state.resetSuccessMessage = null;
+        state.resetError = null;
+      })
+      .addCase(resetPassword.fulfilled, (state, action) => {
+        state.resetLoading = false;
+        state.resetSuccessMessage = action.payload.message;
+      })
+      .addCase(resetPassword.rejected, (state, action) => {
+        state.resetLoading = false;
+        state.resetError = action.payload?.message || "Reset failed.";
       });
   },
 });
