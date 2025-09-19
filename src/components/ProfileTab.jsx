@@ -59,7 +59,9 @@ function ProfileTab({ data, profileData, setProfileData }) {
             <div className="relative cursor-pointer" onClick={handleImageClick}>
               <div className="w-32 h-32 rounded-full bg-mint-800 flex items-center justify-center overflow-hidden border-2 border-mint-600">
                 <img
-                  src={profileImg}
+                  src={`${
+                    import.meta.env.VITE_SNAPTIDE_URL
+                  }/avatar-proxy?url=${encodeURIComponent(profileImg)}`}
                   alt="Profile"
                   className="w-full h-full object-cover"
                 />

@@ -108,6 +108,7 @@ function ProfilePictureUpload({ profileData, currentImage }) {
       await dispatch(uploadProfilePicture(file)).unwrap();
       toast.success("Profile picture updated successfully!");
       setView("upload");
+      window.location.reload();
     } catch (err) {
       console.error("Upload failed:", err);
       toast.error("Failed to upload profile picture.");
