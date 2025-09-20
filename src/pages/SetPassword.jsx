@@ -20,7 +20,6 @@ function SetPassword() {
   });
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -100,7 +99,6 @@ function SetPassword() {
       ).unwrap();
 
       toast.success(res.message || "Password has been reset!");
-      setIsSubmitted(true);
     } catch (err) {
       toast.error(err || "Something went wrong. Try again.");
     }
@@ -127,35 +125,6 @@ function SetPassword() {
       </span>
     </div>
   );
-
-  if (isSubmitted) {
-    return (
-      <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-mint-900 to-mint-950">
-        <div className="bg-mint-800 p-8 rounded-2xl shadow-2xl border border-mint-600 max-w-md w-full">
-          <div className="text-center">
-            <div className="flex justify-center mb-6">
-              <div className="bg-green-500/20 p-4 rounded-full">
-                <FaCheck className="w-12 h-12 text-green-400" />
-              </div>
-            </div>
-            <h2 className="text-2xl font-nunito font-bold text-mint-100 mb-4">
-              Password Set Successfully!
-            </h2>
-            <p className="text-mint-300 mb-6">
-              Your password has been updated. You can now use your new password
-              to sign in to your account.
-            </p>
-            <Link
-              to="/profile"
-              className="bg-mint-600 hover:bg-mint-500 text-white font-medium py-3 px-6 rounded-lg transition-colors w-full inline-block"
-            >
-              Back to Profile
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-mint-900 to-mint-950">
