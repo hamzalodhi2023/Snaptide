@@ -97,7 +97,7 @@ function Register() {
 
       navigate("/login");
     } catch (err) {
-      toast.error(err?.message || "Registration failed!");
+      toast.error(err?.msg);
     } finally {
       setIsSubmitting(false);
     }

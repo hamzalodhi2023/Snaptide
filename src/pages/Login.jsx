@@ -40,17 +40,7 @@ function Login() {
       navigate("/");
       window.location.reload();
     } catch (err) {
-      if (err?.status === 400) {
-        toast.error("User does not exist");
-      } else if (err?.status === 401) {
-        toast.error("Incorrect password");
-      } else if (err?.status === 403) {
-        toast.error("Account is disabled or blocked");
-      } else if (err?.status === 500) {
-        toast.error("Server error. Please try again later.");
-      } else {
-        toast.error(err?.message || "Login failed!");
-      }
+      toast.error(err?.msg);
     } finally {
       setIsSubmitting(false);
       setFormData({ email: "", password: "" });
