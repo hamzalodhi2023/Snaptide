@@ -41,6 +41,11 @@ function App() {
         />
 
         <Routes>
+          {/* ✅ Routes WITHOUT layout */}
+          <Route path="/set-password" element={<SetPassword />} />
+          <Route path="*" element={<Error />} />
+
+          {/* ✅ Routes WITH layout */}
           <Route path="/" element={<UserLayout />}>
             <Route index element={<Home />} />
             <Route path="register" element={<Register />} />
@@ -49,8 +54,6 @@ function App() {
             <Route path="google/callback" element={<Google />} />
             <Route path="about" element={<About />} />
             <Route path="contact" element={<Contact />} />
-            <Route path="set-password" element={<SetPassword />} />
-            <Route path="*" element={<Error />} />
           </Route>
         </Routes>
       </BrowserRouter>
