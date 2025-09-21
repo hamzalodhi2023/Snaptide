@@ -19,9 +19,14 @@ const initialState = {
   resetLoading: false,
   resetSuccessMessage: null,
   resetError: null,
+
+  // 🔁 Validate Reset Token
+  validateLoading: false,
+  isResetTokenValid: null, // true | false | null
+  validateError: null,
 };
 
-// ✅ Login User
+//? ✅ Login User
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (userData, { rejectWithValue }) => {
@@ -46,7 +51,7 @@ export const loginUser = createAsyncThunk(
   }
 );
 
-// ✅ Register User
+//? ✅ Register User
 export const registerUser = createAsyncThunk(
   "auth/registerUser",
   async (userData, { rejectWithValue }) => {
@@ -61,7 +66,7 @@ export const registerUser = createAsyncThunk(
   }
 );
 
-// ✅ Refresh Access Token
+//? ✅ Refresh Access Token
 export const handleTokenRefresh = createAsyncThunk(
   "auth/refresh",
   async (_, { rejectWithValue }) => {
@@ -87,7 +92,7 @@ export const handleTokenRefresh = createAsyncThunk(
   }
 );
 
-// ✅ Logout User
+//? ✅ Logout User
 export const logoutUser = createAsyncThunk(
   "auth/logoutUser",
   async (_, { rejectWithValue }) => {
@@ -104,7 +109,7 @@ export const logoutUser = createAsyncThunk(
   }
 );
 
-// ✅ Forgot Password
+//? ✅ Forgot Password
 export const forgotPassword = createAsyncThunk(
   "auth/forgotPassword",
   async (email, { rejectWithValue }) => {
@@ -119,12 +124,32 @@ export const forgotPassword = createAsyncThunk(
   }
 );
 
+//? ✅ Set Password
 export const resetPassword = createAsyncThunk(
   "auth/resetPassword",
   async ({ token, password, id }, { rejectWithValue }) => {
     try {
       const res = await axios.put(`${URL}/auth/reset-password`, {
         newPassword: password,
+        token,
+        userId: id,
+      });
+
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || { message: error.message }
+      );
+    }
+  }
+);
+
+//? ✅ Validate Reset Token
+export const validateResetToken = createAsyncThunk(
+  "auth/validateResetToken",
+  async ({ token, id }, { rejectWithValue }) => {
+    try {
+      const res = await axios.post(`${URL}/auth/validate-reset-token`, {
         token,
         userId: id,
       });
@@ -152,7 +177,7 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Login
+      //? ✅ Login
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -165,8 +190,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload?.message;
       })
-
-      // Register
+      //? ✅ Register
       .addCase(registerUser.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -178,14 +202,12 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload?.message;
       })
-
-      // Logout
+      //? ✅ Logout
       .addCase(logoutUser.fulfilled, (state) => {
         state.token = null;
         Cookies.remove("accessToken");
       })
-
-      // Refresh1
+      //? ✅ Refresh Token
       .addCase(handleTokenRefresh.fulfilled, (state, action) => {
         state.token = action.payload;
       })
@@ -193,7 +215,7 @@ const authSlice = createSlice({
         state.token = null;
         Cookies.remove("accessToken");
       })
-      // Forgot Password
+      //? ✅ Forgot Password
       .addCase(forgotPassword.pending, (state) => {
         state.forgotLoading = true;
         state.forgotSuccessMessage = null;
@@ -207,6 +229,7 @@ const authSlice = createSlice({
         state.forgotLoading = false;
         state.forgotError = action.payload?.message || "Something went wrong.";
       })
+      //? ✅ Reset Password
       .addCase(resetPassword.pending, (state) => {
         state.resetLoading = true;
         state.resetSuccessMessage = null;
@@ -219,6 +242,22 @@ const authSlice = createSlice({
       .addCase(resetPassword.rejected, (state, action) => {
         state.resetLoading = false;
         state.resetError = action.payload?.message || "Reset failed.";
+      })
+      //? ✅ Validate Reset Token
+      .addCase(validateResetToken.pending, (state) => {
+        state.validateLoading = true;
+        state.isResetTokenValid = null;
+        state.validateError = null;
+      })
+      .addCase(validateResetToken.fulfilled, (state, action) => {
+        state.validateLoading = false;
+        state.isResetTokenValid = action.payload.valid; // true | false
+      })
+      .addCase(validateResetToken.rejected, (state, action) => {
+        state.validateLoading = false;
+        state.isResetTokenValid = false;
+        state.validateError =
+          action.payload?.message || "Token validation failed.";
       });
   },
 });

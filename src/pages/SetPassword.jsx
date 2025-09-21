@@ -6,12 +6,15 @@ import {
   FaCheck,
   FaTimes,
   FaArrowLeft,
+  FaCheckCircle,
+  FaExclamationTriangle,
 } from "react-icons/fa";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { resetPassword } from "../redux/slices/authSlice";
+import { resetPassword, validateResetToken } from "../redux/slices/authSlice";
+import { PulseLoader } from "react-spinners";
 
 function SetPassword() {
   const [formData, setFormData] = useState({
@@ -20,17 +23,28 @@ function SetPassword() {
   });
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
   const id = searchParams.get("id");
+  const { isResetTokenValid, validateLoading, resetLoading } = useSelector(
+    (state) => state.auth
+  );
+
+  useEffect(() => {
+    if (token && id) {
+      dispatch(validateResetToken({ token, id }));
+      console.log(resetLoading);
+    }
+  }, [dispatch, token, id]);
 
   useEffect(() => {
     if (!token || !id) {
       navigate("*");
     }
-  }, [navigate, token, id, dispatch]);
+  }, [navigate, token, id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -40,25 +54,15 @@ function SetPassword() {
     }));
   };
 
-  // Password strength checker (same as register page)
+  // Password strength checker
   const getPasswordStrength = (password) => {
     if (!password) return { strength: 0, message: "" };
 
     let strength = 0;
-
-    // Length check
     if (password.length >= 8) strength += 1;
-
-    // Uppercase check
     if (/[A-Z]/.test(password)) strength += 1;
-
-    // Lowercase check
     if (/[a-z]/.test(password)) strength += 1;
-
-    // Number check
     if (/[0-9]/.test(password)) strength += 1;
-
-    // Special character check
     if (/[^A-Za-z0-9]/.test(password)) strength += 1;
 
     let strengthMessage = "";
@@ -84,21 +88,17 @@ function SetPassword() {
       return;
     }
 
-    if (!token || !id) {
-      toast.error("Invalid or missing token.");
-      return;
-    }
-
     try {
       const res = await dispatch(
         resetPassword({
           token,
           password: formData.newPassword,
-          id, // only if your backend needs it
+          id,
         })
       ).unwrap();
 
       toast.success(res.message || "Password has been reset!");
+      setShowSuccessDialog(true);
     } catch (err) {
       toast.error(err || "Something went wrong. Try again.");
     }
@@ -112,7 +112,6 @@ function SetPassword() {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
-  // Password requirement check icons (same as register page)
   const RequirementCheck = ({ met, text }) => (
     <div className="flex items-center gap-2">
       {met ? (
@@ -126,6 +125,65 @@ function SetPassword() {
     </div>
   );
 
+  // Token expired/invalid view
+  if (!validateLoading && !isResetTokenValid) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-mint-900 to-mint-950">
+        <div className="bg-mint-800 p-8 rounded-2xl shadow-2xl border border-red-500/30 max-w-md w-full text-center">
+          <div className="flex justify-center mb-6">
+            <div className="bg-red-500/20 p-4 rounded-full">
+              <FaExclamationTriangle className="w-12 h-12 text-red-400" />
+            </div>
+          </div>
+          <h1 className="text-2xl font-nunito font-bold text-red-400 mb-4">
+            Link Expired
+          </h1>
+          <p className="text-mint-300 mb-6">
+            This password reset link has expired or is invalid. Please request a
+            new reset link.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Loading state
+  if (validateLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-mint-900 to-mint-950">
+        <div className="bg-mint-800 p-8 rounded-2xl shadow-2xl border border-mint-600 max-w-md w-full text-center">
+          <div className="flex justify-center mb-6">
+            <PulseLoader color="#4FD1C5" size={15} />
+          </div>
+          <p className="text-mint-300">Validating your reset link...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Success dialog
+  if (showSuccessDialog) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-mint-900 to-mint-950">
+        <div className="bg-mint-800 p-8 rounded-2xl shadow-2xl border border-green-500/30 max-w-md w-full text-center">
+          <div className="flex justify-center mb-6">
+            <div className="bg-green-500/20 p-4 rounded-full">
+              <FaCheckCircle className="w-12 h-12 text-green-400" />
+            </div>
+          </div>
+          <h1 className="text-2xl font-nunito font-bold text-green-400 mb-4">
+            Password Reset Successful!
+          </h1>
+          <p className="text-mint-300 mb-6">
+            Your password has been successfully reset. You can now log in with
+            your new password.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Main form view
   return (
     <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-mint-900 to-mint-950">
       <div className="bg-mint-800 p-8 rounded-2xl shadow-2xl border border-mint-600 max-w-md w-full">
@@ -176,7 +234,6 @@ function SetPassword() {
               </button>
             </div>
 
-            {/* Password Strength Indicator (same as register page) */}
             {formData.newPassword && (
               <div className="mt-3">
                 <div className="flex justify-between items-center mb-2">
@@ -210,7 +267,6 @@ function SetPassword() {
                   ></div>
                 </div>
 
-                {/* Password Requirements (same as register page) */}
                 <div className="grid grid-cols-2 gap-2">
                   <RequirementCheck
                     met={formData.newPassword.length >= 8}
@@ -290,15 +346,24 @@ function SetPassword() {
 
           <button
             type="submit"
-            disabled={passwordStrength.strength < 3}
+            disabled={passwordStrength.strength < 3 || resetLoading}
             className={`w-full bg-mint-600 hover:bg-mint-500 text-white font-medium py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2 ${
-              passwordStrength.strength < 3
+              passwordStrength.strength < 3 || resetLoading
                 ? "opacity-75 cursor-not-allowed"
                 : ""
             }`}
           >
-            <FaLock className="w-5 h-5" />
-            Set Password
+            {resetLoading ? (
+              <>
+                <PulseLoader color="#ffffff" size={8} />
+                <span>Setting Password...</span>
+              </>
+            ) : (
+              <>
+                <FaLock className="w-5 h-5" />
+                Set Password
+              </>
+            )}
           </button>
         </form>
       </div>
