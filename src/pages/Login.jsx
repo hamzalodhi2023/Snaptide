@@ -1,17 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FcGoogle } from "react-icons/fc";
-import { FaFacebook, FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaClock } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { forgotPassword, loginUser } from "../redux/slices/authSlice";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { forgotLoading, forgotSuccessMessage, forgotError } = useSelector(
-    (state) => state.auth
-  );
+  const { forgotLoading } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -19,8 +18,41 @@ function Login() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
 
-  //` Form controlled function
+  // Check for existing cooldown on component mount
+  useEffect(() => {
+    const forgotPasswordCooldown = Cookies.get("forgotPasswordCooldown");
+    if (forgotPasswordCooldown) {
+      const remainingTime = Math.max(
+        0,
+        parseInt(forgotPasswordCooldown) - Math.floor(Date.now() / 1000)
+      );
+      if (remainingTime > 0) {
+        setCooldown(remainingTime);
+      } else {
+        Cookies.remove("forgotPasswordCooldown");
+      }
+    }
+  }, []);
+
+  // Timer effect for cooldown
+  useEffect(() => {
+    let timer;
+    if (cooldown > 0) {
+      timer = setInterval(() => {
+        setCooldown((prev) => {
+          if (prev <= 1) {
+            Cookies.remove("forgotPasswordCooldown");
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [cooldown]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -29,7 +61,6 @@ function Login() {
     }));
   };
 
-  //` Login Data submitting
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -53,9 +84,28 @@ function Login() {
       return;
     }
 
+    if (cooldown > 0) {
+      toast.info(
+        `Please wait ${formatTime(
+          cooldown
+        )} before requesting another reset email.`
+      );
+      return;
+    }
+
     try {
       const res = await dispatch(forgotPassword(formData.email)).unwrap();
       toast.success(res.message || "Password reset email sent!");
+
+      // Set cooldown in cookie (3 minutes = 180 seconds)
+      const cooldownEndTime = Math.floor(Date.now() / 1000) + 180;
+      Cookies.set("forgotPasswordCooldown", cooldownEndTime.toString(), {
+        expires: new Date(Date.now() + 180 * 1000), // 3 minutes
+        secure: true,
+        sameSite: "strict",
+      });
+
+      setCooldown(180);
     } catch (err) {
       toast.error(err || "Failed to send reset email");
     }
@@ -65,6 +115,13 @@ function Login() {
     setShowPassword(!showPassword);
   };
 
+  // Format time from seconds to MM:SS
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
+  };
+
   return (
     <div className="min-h-screen bg-mint-950 text-white font-inter flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -72,7 +129,7 @@ function Login() {
         <div className="bg-mint-900 rounded-xl p-8 border border-mint-800 shadow-lg">
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold font-nunito text-mint-200 mb-2 animate-bounce">
+            <h1 className="text-3xl font-bold font-nunito text-mint-200 mb-2">
               Welcome Back
             </h1>
             <p className="text-mint-100">Sign in to access your account</p>
@@ -109,12 +166,32 @@ function Login() {
                 >
                   Password
                 </label>
-                <button
-                  onClick={handleForgot}
-                  className="text-sm text-mint-400 hover:text-mint-300 transition-colors"
-                >
-                  Forgot Password?
-                </button>
+                <div className="flex items-center gap-2">
+                  {cooldown > 0 && (
+                    <span className="text-sm text-mint-400 flex items-center gap-1">
+                      <FaClock className="w-3 h-3" />
+                      {formatTime(cooldown)}
+                    </span>
+                  )}
+                  <button
+                    type="button"
+                    onClick={handleForgot}
+                    disabled={forgotLoading || cooldown > 0}
+                    className={`text-sm transition-colors ${
+                      cooldown > 0
+                        ? "text-mint-600 cursor-not-allowed"
+                        : forgotLoading
+                        ? "text-mint-600 cursor-not-allowed"
+                        : "text-mint-400 hover:text-mint-300"
+                    }`}
+                  >
+                    {forgotLoading
+                      ? "Sending..."
+                      : cooldown > 0
+                      ? "Resend in"
+                      : "Forgot Password?"}
+                  </button>
+                </div>
               </div>
               <div className="relative">
                 <input
@@ -187,7 +264,7 @@ function Login() {
               Don't have an account?{" "}
               <Link
                 to="/register"
-                className="text-mint-400 hoper:text-mint-300 font-medium transition-colors"
+                className="text-mint-400 hover:text-mint-300 font-medium transition-colors"
               >
                 Sign up
               </Link>
