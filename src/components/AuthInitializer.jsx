@@ -8,12 +8,18 @@ const AuthInitializer = () => {
 
   useEffect(() => {
     const init = async () => {
-      const result = await dispatch(handleTokenRefresh());
+      try {
+        const result = await dispatch(handleTokenRefresh());
 
-      if (handleTokenRefresh.fulfilled.match(result)) {
-        setTimeout(() => {
-          dispatch(getProfile());
-        }, 100); // small delay to ensure token set
+        if (handleTokenRefresh.fulfilled.match(result)) {
+          setTimeout(() => {
+            dispatch(getProfile());
+          }, 100);
+        } else {
+          console.warn("Auto login failed: refresh token expired or invalid");
+        }
+      } catch (err) {
+        console.error("Auto login failed:", err);
       }
     };
 
