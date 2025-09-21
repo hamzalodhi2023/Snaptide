@@ -40,7 +40,7 @@ function Login() {
       navigate("/");
       window.location.reload();
     } catch (err) {
-      toast.error(err?.msg);
+      toast.error(err?.message);
     } finally {
       setIsSubmitting(false);
       setFormData({ email: "", password: "" });

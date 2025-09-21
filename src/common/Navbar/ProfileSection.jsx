@@ -10,7 +10,9 @@ function ProfileSection({ token, profileImg }) {
       <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-mint-500">
         {token && profileImg ? (
           <img
-            src={profileImg}
+            src={`${
+              import.meta.env.VITE_SNAPTIDE_URL
+            }/avatar-proxy?url=${encodeURIComponent(profileImg)}`}
             alt="Profile"
             className="w-full h-full object-cover"
             onError={(e) => {
