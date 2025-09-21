@@ -36,7 +36,6 @@ function SetPassword() {
   useEffect(() => {
     if (token && id) {
       dispatch(validateResetToken({ token, id }));
-      console.log(resetLoading);
     }
   }, [dispatch, token, id]);
 
