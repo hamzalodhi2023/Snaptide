@@ -2,15 +2,19 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { deleteUser } from "../redux/slices/profileSlice";
 import { toast } from "react-toastify";
-import { FaChevronDown, FaExclamationTriangle } from "react-icons/fa";
+import {
+  FaChevronDown,
+  FaEnvelope,
+  FaExclamationTriangle,
+  FaGoogle,
+  FaKey,
+  FaLink,
+  FaLock,
+} from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 function AccountTab({ data }) {
   const dispatch = useDispatch();
-  const [passwordData, setPasswordData] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteReason, setDeleteReason] = useState("");
   const [otherReason, setOtherReason] = useState("");
@@ -65,94 +69,119 @@ function AccountTab({ data }) {
     }
   };
 
-  const handlePasswordSubmit = (e) => {
-    e.preventDefault();
-    // Handle password change logic here
-    console.log("Password changed:", passwordData);
-  };
-
+  console.log(data?.hasPassword);
   return (
     <div className="space-y-6">
-      {/* Change Password Form - Only show for local accounts */}
-      {data?.provider === "local" && (
-        <form
-          onSubmit={handlePasswordSubmit}
-          className="bg-mint-900 rounded-lg p-6"
-        >
-          <h2 className="text-xl font-nunito font-semibold text-mint-100 mb-4">
-            Change Password
+      {/* Social Account Info */}
+      {data && (
+        <div className="bg-mint-900 rounded-lg p-6 border border-mint-800">
+          <h2 className="text-xl font-nunito font-semibold text-mint-100 mb-6 flex items-center gap-2">
+            <FaKey className="text-mint-300" />
+            Account Information
           </h2>
 
           <div className="space-y-4">
-            <div>
-              <label className="block text-mint-100 mb-2">
-                Current Password
-              </label>
-              <input
-                type="password"
-                name="currentPassword"
-                value={passwordData.currentPassword}
-                onChange={handlePasswordChange}
-                className="w-full bg-mint-800 border border-mint-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-mint-400"
-              />
+            {/* Login Method */}
+            <div className="flex items-center gap-3">
+              <div className="bg-mint-800 p-2 rounded-lg">
+                {data?.provider === "google" && (
+                  <FaGoogle className="w-5 h-5 text-mint-300" />
+                )}
+                {!["google", "facebook", "github", "local"].includes(
+                  data?.provider === "local"
+                ) && <FaLink className="w-5 h-5 text-mint-300" />}
+              </div>
+              <div>
+                <p className="text-mint-400 text-sm">Logged in via</p>
+                <p className="text-mint-100 font-medium capitalize">
+                  {data?.provider === "local"
+                    ? "Email & Password"
+                    : data?.provider}
+                </p>
+              </div>
             </div>
 
-            <div>
-              <label className="block text-mint-100 mb-2">New Password</label>
-              <input
-                type="password"
-                name="newPassword"
-                value={passwordData.newPassword}
-                onChange={handlePasswordChange}
-                className="w-full bg-mint-800 border border-mint-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-mint-400"
-              />
+            {/* Email */}
+            <div className="flex items-center gap-3">
+              <div className="bg-mint-800 p-2 rounded-lg">
+                <FaEnvelope className="w-5 h-5 text-mint-300" />
+              </div>
+              <div>
+                <p className="text-mint-400 text-sm">Email address</p>
+                <p className="text-mint-100 font-medium">{data?.email}</p>
+              </div>
             </div>
 
-            <div>
-              <label className="block text-mint-100 mb-2">
-                Confirm New Password
-              </label>
-              <input
-                type="password"
-                name="confirmPassword"
-                value={passwordData.confirmPassword}
-                onChange={handlePasswordChange}
-                className="w-full bg-mint-800 border border-mint-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-mint-400"
-              />
+            {/* Password Status */}
+            <div className="flex items-center gap-3">
+              <div className="bg-mint-800 p-2 rounded-lg">
+                <FaLock className="w-5 h-5 text-mint-300" />
+              </div>
+              <div>
+                <p className="text-mint-400 text-sm">Password status</p>
+                {data?.hasPassword === false ? (
+                  <div className="flex items-center gap-2">
+                    <span className="text-yellow-400 text-sm">Not set</span>
+                    <Link
+                      to="/set-password"
+                      className="text-mint-300 hover:text-mint-100 text-sm font-medium underline flex items-center gap-1 transition-colors"
+                    >
+                      Set Password
+                      <svg
+                        className="w-3 h-3"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <span className="text-green-400 text-sm">Active</span>
+                    <Link
+                      to="/update-password"
+                      className="text-mint-300 hover:text-mint-100 text-sm font-medium underline flex items-center gap-1 transition-colors"
+                    >
+                      Update Password
+                      <svg
+                        className="w-3 h-3"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    </Link>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
-          <div className="mt-6">
-            <button
-              type="submit"
-              className="bg-mint-600 hover:bg-mint-500 text-white font-medium py-2 px-6 rounded-md transition-colors"
-            >
-              Update Password
-            </button>
+          {/* Additional Info */}
+          <div className="mt-6 p-4 bg-mint-800/50 rounded-lg border border-mint-700">
+            <p className="text-mint-300 text-sm">
+              {data?.hasPassword === false ? (
+                <>Set a password to enable email login for your account.</>
+              ) : (
+                <>You can update your password anytime for added security.</>
+              )}
+            </p>
           </div>
-        </form>
-      )}
-
-      {/* Social Account Info */}
-      {data?.provider !== "local" && (
-        <div className="bg-mint-900 rounded-lg p-6 border border-mint-800">
-          <h2 className="text-xl font-nunito font-semibold text-mint-100 mb-4">
-            Account Information
-          </h2>
-          <p className="text-mint-200 mb-2">
-            <span className="font-semibold">Logged in via:</span>{" "}
-            {data?.provider}
-          </p>
-          <p className="text-mint-200">
-            <span className="font-semibold">Email:</span> {data?.email}
-          </p>
-          <p className="text-mint-400 text-sm mt-3">
-            Your account is managed through {data?.provider}. Password changes
-            must be made through their platform.
-          </p>
         </div>
       )}
-
       {/* Delete Account Section */}
       <div className="bg-mint-900 rounded-lg p-6 border border-red-500/30">
         <h2 className="text-xl font-nunito font-semibold text-red-400 mb-2">
@@ -171,7 +200,6 @@ function AccountTab({ data }) {
           Delete Account
         </button>
       </div>
-
       {/* Delete Account Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/80 bg-opacity-75 flex items-center justify-center z-50 p-4">
