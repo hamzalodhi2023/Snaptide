@@ -86,9 +86,9 @@ function AccountTab({ data }) {
                 {data?.provider === "google" && (
                   <FaGoogle className="w-5 h-5 text-mint-300" />
                 )}
-                {!["google", "facebook", "github", "local"].includes(
-                  data?.provider === "local"
-                ) && <FaLink className="w-5 h-5 text-mint-300" />}
+                {data?.provider === "local" && (
+                  <FaLink className="w-5 h-5 text-mint-300" />
+                )}
               </div>
               <div>
                 <p className="text-mint-400 text-sm">Logged in via</p>
