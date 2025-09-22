@@ -48,6 +48,12 @@ export const loginUser = createAsyncThunk(
 
       return res.data;
     } catch (error) {
+      if (error.response.status === 403) {
+        console.log(error.response.data.isVerified);
+        if (!error.response.data.isVerified) {
+          window.location.href = `http://localhost:5173/verify-account?token=${error.response.data.token}`;
+        }
+      }
       return rejectWithValue({
         status: error.response?.status,
         message: error.response?.data?.msg || error.message,
