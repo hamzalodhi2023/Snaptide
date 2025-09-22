@@ -11,7 +11,7 @@ const initialState = {
   loading: false,
   error: null,
 
-  // 🆕 Forgot Password
+  //` 🆕 Forgot Password
   forgotLoading: false,
   forgotSuccessMessage: null,
   forgotError: null,
@@ -20,10 +20,15 @@ const initialState = {
   resetSuccessMessage: null,
   resetError: null,
 
-  // 🔁 Validate Reset Token
+  //` 🔁 Validate Reset Token
   validateLoading: false,
   isResetTokenValid: null, // true | false | null
   validateError: null,
+
+  //` 🔁 Update Password
+  updateLoading: false,
+  updateSuccessMessage: null,
+  updateError: null,
 };
 
 //? ✅ Login User
@@ -163,6 +168,24 @@ export const validateResetToken = createAsyncThunk(
   }
 );
 
+//? ✅ Update Password
+export const updatePassword = createAsyncThunk(
+  "auth/updatePassword",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const res = await axios.put(`${URL}/auth/update-password`, formData, {
+        withCredentials: true,
+      });
+
+      return res.data; // Should return: { message: "Password updated!" }
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || { message: error.message }
+      );
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -258,9 +281,24 @@ const authSlice = createSlice({
         state.isResetTokenValid = false;
         state.validateError =
           action.payload?.message || "Token validation failed.";
+      })
+      //? 🔁 Update Password
+      .addCase(updatePassword.pending, (state) => {
+        state.updateLoading = true;
+        state.updateSuccessMessage = null;
+        state.updateError = null;
+      })
+      .addCase(updatePassword.fulfilled, (state, action) => {
+        state.updateLoading = false;
+        state.updateSuccessMessage = action.payload.message;
+      })
+      .addCase(updatePassword.rejected, (state, action) => {
+        state.updateLoading = false;
+        state.updateError =
+          action.payload?.message || "Password update failed.";
       });
   },
 });
 
-export const { logout, setToken } = authSlice.actions;
+export const { logout, setToken, clearUpdatePasswordState } = authSlice.actions;
 export default authSlice.reducer;

@@ -19,6 +19,7 @@ import Register from "./pages/Register";
 import Google from "./pages/Google";
 import Error from "./pages/Error";
 import SetPassword from "./pages/SetPassword";
+import UpdatePassword from "./pages/UpdatePassword";
 
 function App() {
   return (
@@ -54,6 +55,7 @@ function App() {
             <Route path="google/callback" element={<Google />} />
             <Route path="about" element={<About />} />
             <Route path="contact" element={<Contact />} />
+            <Route path="/update-password" element={<UpdatePassword />} />
           </Route>
         </Routes>
       </BrowserRouter>

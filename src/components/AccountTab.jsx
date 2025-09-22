@@ -122,7 +122,7 @@ function AccountTab({ data }) {
                   <div className="flex items-center gap-2">
                     <span className="text-yellow-400 text-sm">Not set</span>
                     <Link
-                      to="/set-password"
+                      to="/update-password"
                       className="text-mint-300 hover:text-mint-100 text-sm font-medium underline flex items-center gap-1 transition-colors"
                     >
                       Set Password
