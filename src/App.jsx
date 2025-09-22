@@ -20,6 +20,7 @@ import Google from "./pages/Google";
 import Error from "./pages/Error";
 import SetPassword from "./pages/SetPassword";
 import UpdatePassword from "./pages/UpdatePassword";
+import Otp from "./pages/Otp";
 
 function App() {
   return (
@@ -56,6 +57,7 @@ function App() {
             <Route path="about" element={<About />} />
             <Route path="contact" element={<Contact />} />
             <Route path="/update-password" element={<UpdatePassword />} />
+            <Route path="/verify-account" element={<Otp />} />
           </Route>
         </Routes>
       </BrowserRouter>
