@@ -69,7 +69,6 @@ function AccountTab({ data }) {
     }
   };
 
-  console.log(data?.hasPassword);
   return (
     <div className="space-y-6">
       {/* Social Account Info */}
