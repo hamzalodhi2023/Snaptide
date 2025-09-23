@@ -15,6 +15,7 @@ import {
 import { PulseLoader } from "react-spinners";
 import { Link } from "react-router-dom";
 import { updatePassword } from "../redux/slices/authSlice";
+import { getProfile } from "../redux/slices/profileSlice";
 
 function UpdatePassword() {
   const dispatch = useDispatch();
@@ -88,6 +89,7 @@ function UpdatePassword() {
           };
 
       const res = await dispatch(updatePassword(passwordData)).unwrap();
+      dispatch(getProfile());
 
       toast.success(res.message || "Password updated successfully!");
 
