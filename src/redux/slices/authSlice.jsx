@@ -29,6 +29,11 @@ const initialState = {
   updateLoading: false,
   updateSuccessMessage: null,
   updateError: null,
+
+  // 🔁 Send OTP
+  otpLoading: false,
+  otpSuccessMessage: null,
+  otpError: null,
 };
 
 //? ✅ Login User
@@ -169,6 +174,31 @@ export const validateResetToken = createAsyncThunk(
   }
 );
 
+//? ✅ Verify Account OTP
+export const sendOtp = createAsyncThunk(
+  "auth/sendOtp",
+  async ({ token, otp }, { rejectWithValue }) => {
+    try {
+      const res = await api.put(`${URL}/auth/verify-account`, {
+        token,
+        otp,
+      });
+
+      const in15Minutes = new Date(new Date().getTime() + 15 * 60 * 1000);
+      Cookies.set("accessToken", res.data.accessToken, {
+        expires: in15Minutes,
+        path: "/",
+      });
+      console.log(res.data.accessToken);
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || { message: error.message }
+      );
+    }
+  }
+);
+
 //? ✅ Update Password
 export const updatePassword = createAsyncThunk(
   "auth/updatePassword",
@@ -297,6 +327,21 @@ const authSlice = createSlice({
         state.updateLoading = false;
         state.updateError =
           action.payload?.message || "Password update failed.";
+      })
+      //? 🔁 Send OTP
+      .addCase(sendOtp.pending, (state) => {
+        state.otpLoading = true;
+        state.otpSuccessMessage = null;
+        state.otpError = null;
+      })
+      .addCase(sendOtp.fulfilled, (state, action) => {
+        state.otpLoading = false;
+        state.otpSuccessMessage = action.payload.message;
+        state.token = action.payload.accessToken;
+      })
+      .addCase(sendOtp.rejected, (state, action) => {
+        state.otpLoading = false;
+        state.otpError = action.payload?.message || "OTP verification failed.";
       });
   },
 });

@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-// import { verifyOtp } from "../redux/slices/authSlice";
+import Cookies from "js-cookie";
 import {
   FaCheckCircle,
   FaExclamationTriangle,
@@ -12,6 +12,7 @@ import {
 } from "react-icons/fa";
 import { PulseLoader } from "react-spinners";
 import { Link } from "react-router-dom";
+import { sendOtp } from "../redux/slices/authSlice";
 
 function Otp() {
   const [searchParams] = useSearchParams();
@@ -23,7 +24,7 @@ function Otp() {
   );
 
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
-  const [showSuccess, setShowSuccess] = useState(false);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [canResend, setCanResend] = useState(true);
@@ -31,16 +32,34 @@ function Otp() {
 
   const inputRefs = useRef([]);
 
-  //   useEffect(() => {
-  //     if (!token) {
-  //       toast.error("Invalid verification link");
-  //       navigate("/login");
-  //     }
-  //   }, [token, navigate]);
+  // Initialize cooldown from cookies on component mount
+  useEffect(() => {
+    const otpCooldown = Cookies.get("otpCooldown");
+    if (otpCooldown) {
+      const remainingTime = Math.max(
+        0,
+        parseInt(otpCooldown) - Math.floor(Date.now() / 1000)
+      );
+      if (remainingTime > 0) {
+        setResendCooldown(remainingTime);
+        setCanResend(false);
+      } else {
+        Cookies.remove("otpCooldown");
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!token) {
+      toast.error("Invalid verification link");
+      navigate("/login");
+    }
+  }, [token, navigate]);
 
   useEffect(() => {
     if (verifySuccess) {
-      setShowSuccess(true);
+      setShowSuccessDialog(true);
+      toast.success("OTP verified successfully! You are now logged in.");
     }
   }, [verifySuccess]);
 
@@ -48,10 +67,11 @@ function Otp() {
     if (verifyError) {
       setErrorMessage(verifyError);
       setShowError(true);
+      toast.error(verifyError);
     }
   }, [verifyError]);
 
-  // Resend cooldown timer
+  // Resend cooldown timer with cookie persistence
   useEffect(() => {
     let timer;
     if (resendCooldown > 0) {
@@ -59,9 +79,20 @@ function Otp() {
         setResendCooldown((prev) => {
           if (prev <= 1) {
             setCanResend(true);
+            Cookies.remove("otpCooldown");
             return 0;
           }
-          return prev - 1;
+
+          // Update cookie with remaining time
+          const newCooldown = prev - 1;
+          const cooldownEndTime = Math.floor(Date.now() / 1000) + newCooldown;
+          Cookies.set("otpCooldown", cooldownEndTime.toString(), {
+            expires: new Date(Date.now() + newCooldown * 1000),
+            secure: true,
+            sameSite: "strict",
+          });
+
+          return newCooldown;
         });
       }, 1000);
     }
@@ -69,13 +100,12 @@ function Otp() {
   }, [resendCooldown]);
 
   const handleChange = (index, value) => {
-    if (!/^\d*$/.test(value)) return; // Only allow numbers
+    if (!/^\d*$/.test(value)) return;
 
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
 
-    // Auto-focus to next input
     if (value && index < 5) {
       inputRefs.current[index + 1].focus();
     }
@@ -83,7 +113,6 @@ function Otp() {
 
   const handleKeyDown = (index, e) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
-      // Move to previous input on backspace
       inputRefs.current[index - 1].focus();
     }
   };
@@ -109,27 +138,43 @@ function Otp() {
     }
 
     try {
-      //   await dispatch(verifyOtp({ token, otp: otpString })).unwrap();
+      await dispatch(sendOtp({ token, otp: otpString })).unwrap();
+      setShowSuccessDialog(true);
+      navigate("/");
+      window.location.reload();
     } catch (err) {
-      // Error is handled by the reducer
+      console.log(err);
+      toast.error(err.msg);
     }
   };
 
   const handleResendOtp = () => {
     if (!canResend) return;
 
-    // Implement resend OTP logic here
-    toast.info("OTP resent to your email");
+    // Set cooldown in cookie (60 seconds)
+    const cooldownEndTime = Math.floor(Date.now() / 1000) + 60;
+    Cookies.set("otpCooldown", cooldownEndTime.toString(), {
+      expires: new Date(Date.now() + 60 * 1000),
+      secure: true,
+      sameSite: "strict",
+    });
+
     setCanResend(false);
-    setResendCooldown(60); // 60 seconds cooldown
+    setResendCooldown(60);
+    toast.info("OTP resent to your email");
+
+    // Implement actual resend logic here
+    // dispatch(resendOtp({ token }));
   };
 
   const formatTime = (seconds) => {
-    return `${seconds.toString().padStart(2, "0")}`;
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
   // Success Dialog
-  if (showSuccess) {
+  if (showSuccessDialog) {
     return (
       <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-mint-900 to-mint-950">
         <div className="bg-mint-800 p-8 rounded-2xl shadow-2xl border border-green-500/30 max-w-md w-full text-center">
@@ -142,15 +187,9 @@ function Otp() {
             Verification Successful!
           </h1>
           <p className="text-mint-300 mb-6">
-            Your email has been successfully verified. You can now access all
-            features of your account.
+            Your email has been successfully verified and you are now logged in.
+            Redirecting to dashboard...
           </p>
-          <Link
-            to="/dashboard"
-            className="bg-mint-600 hover:bg-mint-500 text-white font-medium py-3 px-6 rounded-lg transition-colors inline-block"
-          >
-            Go to Dashboard
-          </Link>
         </div>
       </div>
     );
@@ -251,8 +290,9 @@ function Otp() {
                 Didn't receive the code? Resend OTP
               </button>
             ) : (
-              <p className="text-mint-400 text-sm">
-                Resend OTP in {formatTime(resendCooldown)} seconds
+              <p className="text-mint-400 text-sm flex items-center justify-center gap-1">
+                <FaRedo className="w-3 h-3" />
+                Resend OTP in {formatTime(resendCooldown)}
               </p>
             )}
           </div>

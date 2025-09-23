@@ -76,6 +76,7 @@ function Login() {
       // 🔍 Check if the accountVerificationToken is available in Redux
       if (err?.token && err?.isVerified === false) {
         navigate(`/verify-account?token=${err.token}`);
+        toast.info("OTP send to your email");
       }
     } finally {
       setIsSubmitting(false);
