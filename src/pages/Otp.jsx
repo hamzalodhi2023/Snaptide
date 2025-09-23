@@ -13,6 +13,7 @@ import {
 import { PulseLoader } from "react-spinners";
 import { Link } from "react-router-dom";
 import { resendOtp, sendOtp } from "../redux/slices/authSlice";
+import { getProfile } from "../redux/slices/profileSlice";
 
 function Otp() {
   const [searchParams] = useSearchParams();
@@ -140,8 +141,8 @@ function Otp() {
     try {
       await dispatch(sendOtp({ token, otp: otpString })).unwrap();
       setShowSuccessDialog(true);
+      dispatch(getProfile());
       navigate("/");
-      window.location.reload();
     } catch (err) {
       console.log(err);
       toast.error(err.msg);

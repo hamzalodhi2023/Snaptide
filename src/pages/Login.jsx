@@ -68,8 +68,8 @@ function Login() {
     try {
       const result = await dispatch(loginUser(formData)).unwrap();
       toast.success("Login successful!");
+      dispatch(getProfile());
       navigate("/");
-      window.location.reload();
     } catch (err) {
       toast.error(err?.message || "Login failed.");
 

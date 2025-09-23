@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { setToken } from "../redux/slices/authSlice";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
+import { getProfile } from "../redux/slices/profileSlice";
 
 function Google() {
   const navigate = useNavigate();
@@ -34,8 +35,8 @@ function Google() {
 
           // Wait a bit to show success message
           await new Promise((resolve) => setTimeout(resolve, 1000));
+          dispatch(getProfile());
           navigate("/");
-          window.location.reload();
         } else {
           setStatus("error");
           setMessage("Login failed. Redirecting to login page...");

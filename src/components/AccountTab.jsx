@@ -60,7 +60,7 @@ function AccountTab({ data }) {
       // ⏳ Delay to allow toast to show
       setTimeout(() => {
         window.location.reload();
-      }, 1500);
+      }, 1000);
     } catch (error) {
       console.error("Account deletion failed:", error);
       toast.error("Failed to delete account. Please try again.");

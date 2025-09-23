@@ -14,7 +14,7 @@ import {
 } from "react-icons/fa";
 import getCroppedImg from "../components/CropImage";
 import { useDispatch, useSelector } from "react-redux";
-import { uploadProfilePicture } from "../redux/slices/profileSlice";
+import { getProfile, uploadProfilePicture } from "../redux/slices/profileSlice";
 import { toast } from "react-toastify";
 
 function ProfilePictureUpload({ profileData, currentImage }) {
@@ -108,7 +108,7 @@ function ProfilePictureUpload({ profileData, currentImage }) {
       await dispatch(uploadProfilePicture(file)).unwrap();
       toast.success("Profile picture updated successfully!");
       setView("upload");
-      window.location.reload();
+      dispatch(getProfile());
     } catch (err) {
       console.error("Upload failed:", err);
       toast.error("Failed to upload profile picture.");
