@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { deleteUser } from "../redux/slices/profileSlice";
+import { deleteUser, getProfile } from "../redux/slices/profileSlice";
 import { toast } from "react-toastify";
 import {
   FaChevronDown,
@@ -11,10 +11,11 @@ import {
   FaLink,
   FaLock,
 } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function AccountTab({ data }) {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteReason, setDeleteReason] = useState("");
   const [otherReason, setOtherReason] = useState("");
@@ -56,11 +57,8 @@ function AccountTab({ data }) {
       const res = await dispatch(deleteUser({ reason })).unwrap();
 
       toast.success("Account deleted successfully!");
-
-      // ⏳ Delay to allow toast to show
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      dispatch(getProfile());
+      navigate("/login");
     } catch (error) {
       console.error("Account deletion failed:", error);
       toast.error("Failed to delete account. Please try again.");
