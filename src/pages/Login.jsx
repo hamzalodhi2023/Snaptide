@@ -71,7 +71,12 @@ function Login() {
       navigate("/");
       window.location.reload();
     } catch (err) {
-      toast.error(err?.message);
+      toast.error(err?.message || "Login failed.");
+
+      // 🔍 Check if the accountVerificationToken is available in Redux
+      if (err?.token && err?.isVerified === false) {
+        navigate(`/verify-account?token=${err.token}`);
+      }
     } finally {
       setIsSubmitting(false);
       setFormData({ email: "", password: "" });
