@@ -30,10 +30,15 @@ const initialState = {
   updateSuccessMessage: null,
   updateError: null,
 
-  // 🔁 Send OTP
+  //` 🔁 Send OTP
   otpLoading: false,
   otpSuccessMessage: null,
   otpError: null,
+
+  //` 🔁 Resend OTP
+  resendOtpLoading: false,
+  resendOtpSuccessMessage: null,
+  resendOtpError: null,
 };
 
 //? ✅ Login User
@@ -179,7 +184,7 @@ export const sendOtp = createAsyncThunk(
   "auth/sendOtp",
   async ({ token, otp }, { rejectWithValue }) => {
     try {
-      const res = await api.put(`${URL}/auth/verify-account`, {
+      const res = await api.put("/auth/verify-account", {
         token,
         otp,
       });
@@ -189,7 +194,24 @@ export const sendOtp = createAsyncThunk(
         expires: in15Minutes,
         path: "/",
       });
-      console.log(res.data.accessToken);
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || { message: error.message }
+      );
+    }
+  }
+);
+
+//? ✅ Resend OTP
+export const resendOtp = createAsyncThunk(
+  "auth/resendOtp",
+  async ({ token }, { rejectWithValue }) => {
+    try {
+      const res = await api.post("/auth/resend-otp", {
+        token,
+      });
+
       return res.data;
     } catch (error) {
       return rejectWithValue(
@@ -342,6 +364,21 @@ const authSlice = createSlice({
       .addCase(sendOtp.rejected, (state, action) => {
         state.otpLoading = false;
         state.otpError = action.payload?.message || "OTP verification failed.";
+      })
+      //? 🔁 Resend OTP
+      .addCase(resendOtp.pending, (state) => {
+        state.resendOtpLoading = true;
+        state.resendOtpSuccessMessage = null;
+        state.resendOtpError = null;
+      })
+      .addCase(resendOtp.fulfilled, (state, action) => {
+        state.resendOtpLoading = false;
+        state.resendOtpSuccessMessage = action.payload.message;
+      })
+      .addCase(resendOtp.rejected, (state, action) => {
+        state.resendOtpLoading = false;
+        state.resendOtpError =
+          action.payload?.message || "Failed to resend OTP.";
       });
   },
 });

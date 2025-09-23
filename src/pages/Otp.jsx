@@ -12,7 +12,7 @@ import {
 } from "react-icons/fa";
 import { PulseLoader } from "react-spinners";
 import { Link } from "react-router-dom";
-import { sendOtp } from "../redux/slices/authSlice";
+import { resendOtp, sendOtp } from "../redux/slices/authSlice";
 
 function Otp() {
   const [searchParams] = useSearchParams();
@@ -164,7 +164,7 @@ function Otp() {
     toast.info("OTP resent to your email");
 
     // Implement actual resend logic here
-    // dispatch(resendOtp({ token }));
+    dispatch(resendOtp({ token }));
   };
 
   const formatTime = (seconds) => {
