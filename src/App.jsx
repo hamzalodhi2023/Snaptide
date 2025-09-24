@@ -21,6 +21,7 @@ import Error from "./pages/Error";
 import SetPassword from "./pages/SetPassword";
 import UpdatePassword from "./pages/UpdatePassword";
 import Otp from "./pages/Otp";
+import YTDownloader from "./pages/YTDownloader";
 
 function App() {
   return (
@@ -58,6 +59,7 @@ function App() {
             <Route path="contact" element={<Contact />} />
             <Route path="/update-password" element={<UpdatePassword />} />
             <Route path="/verify-account" element={<Otp />} />
+            <Route path="/tools/yt-downloader" element={<YTDownloader />} />
           </Route>
         </Routes>
       </BrowserRouter>

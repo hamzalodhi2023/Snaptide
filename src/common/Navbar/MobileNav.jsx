@@ -44,7 +44,7 @@ function MobileNav({
       description: "Extract text from videos",
     },
     {
-      path: "/youtube-downloader",
+      path: "/tools/yt-downloader",
       icon: IoLogoYoutube,
       title: "YouTube Video Downloader",
       description: "Download YouTube videos",
