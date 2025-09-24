@@ -69,8 +69,8 @@ function Login() {
     try {
       const result = await dispatch(loginUser(formData)).unwrap();
       toast.success("Login successful!");
-      dispatch(getProfile());
       navigate("/");
+      dispatch(getProfile());
     } catch (err) {
       toast.error(err?.message || "Login failed.");
 
