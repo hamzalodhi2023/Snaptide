@@ -70,7 +70,7 @@ export const registerUser = createAsyncThunk(
   "auth/registerUser",
   async (userData, { rejectWithValue }) => {
     try {
-      const res = await axios.post(`${URL}/auth/register`, userData);
+      const res = await api.post("/auth/register", userData);
       return res.data;
     } catch (error) {
       return rejectWithValue(
@@ -85,9 +85,7 @@ export const handleTokenRefresh = createAsyncThunk(
   "auth/refresh",
   async (_, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`${URL}/auth/refresh`, {
-        withCredentials: true,
-      });
+      const res = await api.get("/auth/refresh");
 
       const newAccessToken = res.data.accessToken;
 
@@ -111,9 +109,7 @@ export const logoutUser = createAsyncThunk(
   "auth/logoutUser",
   async (_, { rejectWithValue }) => {
     try {
-      const res = await axios.delete(`${URL}/auth/logout`, {
-        withCredentials: true,
-      });
+      const res = await api.delete("/auth/logout");
       return res.data;
     } catch (error) {
       return rejectWithValue(
@@ -143,7 +139,7 @@ export const resetPassword = createAsyncThunk(
   "auth/resetPassword",
   async ({ token, password, id }, { rejectWithValue }) => {
     try {
-      const res = await axios.put(`${URL}/auth/reset-password`, {
+      const res = await api.put("/auth/reset-password", {
         newPassword: password,
         token,
         userId: id,
@@ -163,7 +159,7 @@ export const validateResetToken = createAsyncThunk(
   "auth/validateResetToken",
   async ({ token, id }, { rejectWithValue }) => {
     try {
-      const res = await axios.post(`${URL}/auth/validate-reset-token`, {
+      const res = await api.post("/auth/validate-reset-token", {
         token,
         userId: id,
       });
@@ -224,7 +220,7 @@ export const updatePassword = createAsyncThunk(
   "auth/updatePassword",
   async (formData, { rejectWithValue }) => {
     try {
-      const res = await axios.put(`${URL}/auth/update-password`, formData, {
+      const res = await api.put("/auth/update-password", formData, {
         withCredentials: true,
       });
 
