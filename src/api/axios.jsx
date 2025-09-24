@@ -1,14 +1,14 @@
+// axios.js or api.js
 import axios from "axios";
 import store from "../redux/store";
-import { handleTokenRefresh, logout } from "../redux/slices/authSlice"; // ✅ Thunk import
+import { handleTokenRefresh, logout } from "../redux/slices/authSlice";
+import { getNavigate } from "../utils/navigate"; // 🧭 Global navigate
 
-// 🔧 Axios instance
 const api = axios.create({
   baseURL: import.meta.env.VITE_SNAPTIDE_URL,
   withCredentials: true,
 });
 
-//` 2️⃣ Response interceptor — auto refresh logic using Redux thunk
 api.interceptors.response.use(
   (res) => res,
   async (error) => {
@@ -20,11 +20,13 @@ api.interceptors.response.use(
       const resultAction = await store.dispatch(handleTokenRefresh());
 
       if (handleTokenRefresh.fulfilled.match(resultAction)) {
-        return api(originalRequest); // 🔁 Retry original request
+        return api(originalRequest);
       } else {
-        // 🔐 Refresh failed → Logout user
         store.dispatch(logout());
-        window.location.href = "/login";
+
+        const navigate = getNavigate(); // 🧭 use global navigate
+        navigate("/login");
+
         return Promise.reject("Session expired. Please login again.");
       }
     }

@@ -52,9 +52,8 @@ function Profile() {
     if (window.confirm("Are you sure you want to logout?")) {
       dispatch(logoutUser()).then(() => {
         toast.success("You have been logged out successfully!");
-        setTimeout(() => {
-          window.location.href = "/login";
-        }, 1500);
+        dispatch(getProfile());
+        navigate("/login");
       });
     }
   };
