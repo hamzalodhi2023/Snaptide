@@ -46,16 +46,14 @@ export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (userData, { rejectWithValue }) => {
     try {
-      const res = await axios.post(`${URL}/auth/login`, userData, {
-        withCredentials: true,
-      });
+      const res = await api.post("/auth/login", userData);
 
       const in15Minutes = new Date(new Date().getTime() + 15 * 60 * 1000);
       Cookies.set("accessToken", res.data.accessToken, {
         expires: in15Minutes,
         path: "/",
       });
-
+      console.log(res.data.accessToken);
       return res.data;
     } catch (error) {
       return rejectWithValue({
