@@ -40,12 +40,12 @@ function YTDownloader() {
 
   const fetchVideoInfo = async () => {
     if (!videoUrl.trim()) {
-      toast.error("Please enter a YouTube URL");
+      toast.error("Please enter a YT URL");
       return;
     }
 
     if (!validateYouTubeUrl(videoUrl)) {
-      toast.error("Please enter a valid YouTube URL");
+      toast.error("Please enter a valid YT URL");
       return;
     }
 
@@ -57,7 +57,7 @@ function YTDownloader() {
 
       // Mock video info - replace with actual ytdl-core data
       const mockVideoInfo = {
-        title: "Sample YouTube Video Title",
+        title: "Sample YT Video Title",
         duration: "10:30",
         author: "Channel Name",
         views: "1.5M",
@@ -121,10 +121,10 @@ function YTDownloader() {
             </div>
           </div>
           <h1 className="text-3xl sm:text-4xl font-nunito font-bold text-white mb-3">
-            YouTube Video Downloader
+            YT Video Downloader
           </h1>
           <p className="text-mint-200 text-lg">
-            Download YouTube videos in high quality for free
+            Download YT videos in high quality for free
           </p>
         </div>
 
@@ -138,7 +138,7 @@ function YTDownloader() {
                   type="text"
                   value={videoUrl}
                   onChange={(e) => setVideoUrl(e.target.value)}
-                  placeholder="Paste YouTube URL here..."
+                  placeholder="Paste YT URL here..."
                   className="w-full bg-mint-700 border border-mint-600 rounded-lg py-3 pl-10 pr-4 text-white placeholder-mint-400 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent"
                 />
               </div>
@@ -292,7 +292,7 @@ function YTDownloader() {
             How to Download:
           </h3>
           <ol className="text-mint-300 space-y-2 list-decimal list-inside">
-            <li>Copy the YouTube video URL from your browser</li>
+            <li>Copy the YT video URL from your browser</li>
             <li>Paste the URL in the input field above</li>
             <li>Click "Get Video" to load video information</li>
             <li>Select your preferred download quality</li>
