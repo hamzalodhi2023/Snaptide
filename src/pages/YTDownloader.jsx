@@ -175,7 +175,7 @@ function YTDownloader() {
                 <img
                   src={videoInfo.thumbnail}
                   alt={videoInfo.title}
-                  className="w-full h-48 object-cover rounded-lg"
+                  className="w-[246px] h-[138px] object-cover rounded-lg"
                   onError={(e) => {
                     e.target.src = `https://img.youtube.com/vi/${extractVideoId(
                       videoUrl
