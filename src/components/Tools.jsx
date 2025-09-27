@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 function Tools() {
   const [activeCategory, setActiveCategory] = useState("All");
@@ -111,9 +112,12 @@ function Tools() {
 
         {/* Additional Call to Action */}
         <div className="text-center mt-12">
-          <button className="bg-mint-600 hover:bg-mint-500 text-white font-medium py-3 px-8 rounded-md transition-colors duration-300 transform hover:scale-105">
+          <Link
+            to="/tools"
+            className="bg-mint-600 hover:bg-mint-500 text-white font-medium py-3 px-8 rounded-md transition-colors duration-300 transform hover:scale-105"
+          >
             Explore All Tools
-          </button>
+          </Link>
         </div>
       </div>
     </section>

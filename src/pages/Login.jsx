@@ -20,6 +20,13 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [cooldown, setCooldown] = useState(0);
+  const { token } = useSelector((state) => state.auth);
+  // 🔐 Redirect to login if not authenticated
+  useEffect(() => {
+    if (token) {
+      navigate("/profile");
+    }
+  }, [token, navigate]);
 
   // Check for existing cooldown on component mount
   useEffect(() => {
