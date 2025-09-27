@@ -21,7 +21,7 @@ import Error from "./pages/Error";
 import SetPassword from "./pages/SetPassword";
 import UpdatePassword from "./pages/UpdatePassword";
 import Otp from "./pages/Otp";
-import Tools from "./components/Tools";
+import Tools from "./pages/Tools";
 
 function App() {
   return (
